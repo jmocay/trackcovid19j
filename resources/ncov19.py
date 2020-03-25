@@ -4,17 +4,11 @@ from flask_restful import Resource
 
 class ConfirmedCasesMap(Resource):
     def get(self):
-        df = pd.read_csv('data/time_series_19-covid-Confirmed.csv')
-        count_asofdate = df.columns[len(df.columns)-1]
-        df['Location'] = df['Province/State']
-        df['Location'].fillna(df['Country/Region'], inplace=True)
-        df[count_asofdate].fillna(0, inplace=True)
-        df2 = df.loc[ :, ['Lat', 'Long', 'Location', count_asofdate] ]
+        df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Lat','Long_'])['Confirmed'].sum())
         return {
-            "city": [str(val) for val in df2['Location']],
-            "lat": [float(val) for val in df2['Lat']],
-            "lon": [float(val) for val in df2['Long']],
-            "count": [int(val) for val in df2[count_asofdate]],
+            "lat": [float(idx[0]) for idx in df.index],
+            "lon": [float(idx[1]) for idx in df.index],
+            "count": [int(cnt) for cnt in df['Confirmed']],
         }
 
 class GlobalCasesTimeSeries(Resource):
@@ -50,6 +44,20 @@ class CasesByCountry(Resource):
 
         return stats
 
+class ConfirmedCasesMap_v0(Resource):
+    def get(self):
+        df = pd.read_csv('data/time_series_19-covid-Confirmed.csv')
+        count_asofdate = df.columns[len(df.columns)-1]
+        df['Location'] = df['Province/State']
+        df['Location'].fillna(df['Country/Region'], inplace=True)
+        df[count_asofdate].fillna(0, inplace=True)
+        df2 = df.loc[ :, ['Lat', 'Long', 'Location', count_asofdate] ]
+        return {
+            "city": [str(val) for val in df2['Location']],
+            "lat": [float(val) for val in df2['Lat']],
+            "lon": [float(val) for val in df2['Long']],
+            "count": [int(val) for val in df2[count_asofdate]],
+
 class CasesByCountry_v0(Resource):
     def get(self):
         stats = {}
@@ -59,7 +67,7 @@ class CasesByCountry_v0(Resource):
             'data/time_series_19-covid-Deaths.csv',
             'data/time_series_19-covid-Recovered.csv'
         ]
-        i = 0
+
         for i in range(len(categories)):
             df = pd.read_csv(csv_files[i])
             country_reg = df.columns[1] # Country/Region column

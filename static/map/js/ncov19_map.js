@@ -28,10 +28,6 @@ const initMap = async () => {
                 { icon: ncov19Icon }
             ).addTo(ncov19Map)
             layer.bindTooltip(`
-                City: <b>${mapData['city'][i]}</b><br/>
-                Case(s) confirmed: <b>${mapData['count'][i]}</b>
-            `).openTooltip()
-            layer.bindTooltip(`
                 Case(s) confirmed: <b>${mapData['count'][i]}</b>
             `).openTooltip()
             layer.closeTooltip()
