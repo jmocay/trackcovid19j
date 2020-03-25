@@ -58,7 +58,7 @@ const populateChart = async (chartData) => {
 
 const getChartData = async () => {
     try {
-        let res = await fetch("http://localhost:5000/global_cases_timeseries", {
+        let res = await fetch("http://trackcovid19j.herokuapp.com/global_cases_timeseries", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
