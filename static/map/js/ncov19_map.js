@@ -18,7 +18,6 @@ const initMap = async () => {
 
     try {
         let mapData = await getNCov19MapData()
-        
         for (let i = 0; i < mapData['lat'].length; i++) {
             let layer = L.marker(
                 [
@@ -27,9 +26,9 @@ const initMap = async () => {
                 ],
                 { icon: ncov19Icon }
             ).addTo(ncov19Map)
-            layer.bindTooltip(`
-                Case(s) confirmed: <b>${mapData['count'][i]}</b>
-            `).openTooltip()
+            // layer.bindTooltip(`
+            //     Case(s) confirmed: <b>${mapData['count'][i]}</b>
+            // `).openTooltip()
             layer.closeTooltip()
         }
     }
@@ -42,7 +41,7 @@ const initMap = async () => {
 }
 
 const getNCov19MapData = async () => {
-    let res = await fetch("http://trackcovid19j.herokuapp.com/global_confirmed_cases", {
+    let res = await fetch("http://localhost:5000/global_confirmed_cases", {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
