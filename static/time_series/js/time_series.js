@@ -74,7 +74,8 @@ const updateChartData = async (chartData, country) => {
 const getChartData = async (country) => {
     try {
         country = !country ? 'Global' : country
-        let url = `http://trackcovid19j.herokuapp.com/global_cases_timeseries/${country}`
+        console.log(country)
+        let url = `http://trackcovid19j.herokuapp.com/global_cases_timeseries`
         let res = await fetch(url, {
             method: 'GET',
             headers: {
