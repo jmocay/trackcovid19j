@@ -71,15 +71,6 @@ const updateChartData = async (chartData, country) => {
     chart.update(0)
 }
 
-country = !country ? 'Global' : country
-let url = `http://localhost:5000/global_cases_timeseries/${country}`
-let res = await fetch(url, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-})
-
 const getChartData = async (country) => {
     try {
         country = !country ? 'Global' : country
