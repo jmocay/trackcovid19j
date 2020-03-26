@@ -10,7 +10,7 @@ app = Flask(__name__)
 api = Api(app)
 
 api.add_resource(ConfirmedCasesMap, "/global_confirmed_cases")
-api.add_resource(GlobalCasesTimeSeries, "/global_cases_timeseries")
+api.add_resource(GlobalCasesTimeSeries, "/global_cases_timeseries/<country>")
 api.add_resource(CasesByCountry, "/cases_bycountry")
 
 @app.route('/')
