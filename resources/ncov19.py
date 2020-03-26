@@ -21,7 +21,7 @@ class GlobalCasesTimeSeries(Resource):
             'data/time_series_covid19_recovered_global.csv'
         ]
         stats = {}
-        for i in range(3):
+        for i in range(len(categories)):
             df = pd.DataFrame([
                 pd.read_csv(csv_files[i])
                     .drop(['Province/State', 'Country/Region', 'Lat', 'Long'], axis=1)

@@ -135,44 +135,44 @@ footer a {
 }
 
 .map-spinner {
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid orange;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid orange;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .chart-control {
-  font-family: sans-serif;
-  background-color: rgb(234, 248, 218);
-  margin-left: 5px;
-  margin-right: 5px;
+    font-family: sans-serif;
+    background-color: rgb(234, 248, 218);
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .chart-canvas {
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  width: 640px;
-  height: 640px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    width: 640px;
+    height: 640px;
 }
 
 @media screen and (min-width: 800px) {
-  .div-timeseries div:first-child {
-    max-width: 100%;
-    max-height: 100%;
-    float: left;
-  }
+    .div-timeseries div:first-child {
+        max-width: 100%;
+        max-height: 100%;
+        float: left;
+    }
 }
