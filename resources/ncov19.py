@@ -18,7 +18,7 @@ class GlobalCasesTimeSeries(Resource):
         categories = ['confirmed', 'deaths', 'recovered']
         csv_files = ['data/time_series_covid19_confirmed_global.csv',
             'data/time_series_covid19_deaths_global.csv',
-            'data/time_series_19-covid-Recovered.csv'
+            'data/time_series_covid19_recovered_global.csv'
         ]
         stats = {}
         for i in range(3):
