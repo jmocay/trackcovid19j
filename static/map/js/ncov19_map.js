@@ -2,6 +2,11 @@ const initMap = async () => {
     const mapDiv = document.getElementById("div-map")
 
     const ncov19Map = L.map(mapDiv)
+    ncov19Map.addEventListener('load', (evt) => {
+        let spinnerDiv = document.createElement('div')
+        spinnerDiv.className = "map-spinner"
+        mapDiv.append(spinnerDiv)
+    })
     ncov19Map.setView([0, 0], 2)
     const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -19,18 +24,26 @@ const initMap = async () => {
     try {
         let mapData = await getNCov19MapData()
         for (let i = 0; i < mapData['lat'].length; i++) {
-            let layer = L.marker(
-                [
-                    mapData['lat'][i],
-                    mapData['lon'][i]
-                ],
-                { icon: ncov19Icon }
-            ).addTo(ncov19Map)
-            // layer.bindTooltip(`
-            //     Case(s) confirmed: <b>${mapData['count'][i]}</b>
-            // `).openTooltip()
-            layer.closeTooltip()
+
+            if (mapData['count'][i] >= 20) {
+                let layer = L.marker(
+                    [
+                        mapData['lat'][i],
+                        mapData['lon'][i]
+                    ],
+                    { icon: ncov19Icon }
+                ).addTo(ncov19Map)
+
+                layer.bindTooltip(`
+                        Location: <b>${mapData['location'][i]}</b><br>
+                        Case(s) confirmed: <b>${mapData['count'][i]}</b>
+                    `).openTooltip()
+                layer.closeTooltip()
+            }
         }
+
+        let spinnerDiv = mapDiv.getElementsByClassName('map-spinner')
+        mapDiv.removeChild(spinnerDiv)
     }
     catch (error) {
         let root = document.getElementById("div-map")
@@ -51,14 +64,4 @@ const getNCov19MapData = async () => {
     let mapData = await res.json()
 
     return mapData
-}
-
-const onLoadingMap = () => {
-    console.log('loading...')
-    // tbd show spinner
-}
-
-const onLoadedMap = () => {
-    console.log('done loading.')
-    // tbd hide spinner
 }

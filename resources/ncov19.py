@@ -4,10 +4,12 @@ from flask_restful import Resource
 
 class ConfirmedCasesMap(Resource):
     def get(self):
-        df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Lat','Long_'])['Confirmed'].sum())
+        df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Combined_Key', 'Lat', 'Long_'])['Confirmed'].sum())
+        df = df[df['Confirmed'] > 0]
         return {
-            "lat": [float(idx[0]) for idx in df.index],
-            "lon": [float(idx[1]) for idx in df.index],
+            "location": [str(idx[0]) for idx in df.index],
+            "lat": [float(idx[1]) for idx in df.index],
+            "lon": [float(idx[2]) for idx in df.index],
             "count": [int(cnt) for cnt in df['Confirmed']],
         }
 
