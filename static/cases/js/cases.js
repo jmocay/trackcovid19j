@@ -19,6 +19,11 @@ const getCasesData = async () => {
     }
 }
 
+const bycountry_or_global_handler = (evt) => {
+    country = evt.srcElement.value
+    updateChart(country)
+}
+
 const populateCases = async (casesData) => {
     let cases = [
         {
@@ -45,15 +50,20 @@ const populateCases = async (casesData) => {
 
     cases.forEach((item) => {
         let root = document.getElementById(item.id)
-        
-        let h2 = root.firstElementChild
-        h2.textContent = `${casesData['total_' + item.category]} ${item.label}`
+
+        let btn = document.createElement("button")
+        btn.textContent = `${casesData['total_' + item.category]} ${item.label}`
+        btn.className = "div-bycountry-header"
+        btn.onclick = bycountry_or_global_handler
+        root.append(btn)
 
         let i = 0
         casesData['countries_' + item.category].forEach((country) => {
-            let btn = document.createElement("button")
-            btn.className = `btn-${item.category}-bycountry`
+            btn = document.createElement("button")
             btn.textContent = `${casesData[item.category][i]} ${country}`
+            btn.className = "div-bycountry-button"
+            btn.value = country
+            btn.onclick = bycountry_or_global_handler
             root.append(btn)
             i++
         })

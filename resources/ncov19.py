@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime
-from flask_restful import Resource
+from flask_restful import Resource, request
+import json
 
 class ConfirmedCasesMap(Resource):
     def get(self):
@@ -14,21 +15,28 @@ class ConfirmedCasesMap(Resource):
         }
 
 class GlobalCasesTimeSeries(Resource):
-    def get(self):
+    def post(self):
+        country = request.json['country']
         categories = ['confirmed', 'deaths', 'recovered']
-        csv_files = ['data/time_series_covid19_confirmed_global.csv',
+        csv_files = [
+            'data/time_series_covid19_confirmed_global.csv',
             'data/time_series_covid19_deaths_global.csv',
             'data/time_series_covid19_recovered_global.csv'
         ]
         stats = {}
         for i in range(len(categories)):
-            df = pd.DataFrame([
-                pd.read_csv(csv_files[i])
-                    .drop(['Province/State', 'Country/Region', 'Lat', 'Long'], axis=1)
-                    .sum(axis=0)]).T
+            if country == 'Global':
+                df = pd.DataFrame([
+                        pd.read_csv(csv_files[i])
+                            .drop(['Province/State', 'Country/Region', 'Lat', 'Long'], axis=1)
+                            .sum(axis=0)]).T
+            else:
+                df = pd.read_csv(csv_files[i])
+                df = pd.DataFrame(df[ df['Country/Region'] == country ]
+                              .drop(['Province/State', 'Country/Region', 'Lat', 'Long'], axis=1)
+                              .sum(axis=0))
             stats['{0}_count'.format(categories[i])] = [int(cnt) for cnt in df[df.columns[0]]]
         stats['date'] = [str(dt) for dt in df.index]
-
         return stats
 
 class CasesByCountry(Resource):

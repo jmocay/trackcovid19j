@@ -1,39 +1,15 @@
-const initChart = async () => {
-    let chartData = await getChartData()
-    populateChart(chartData)
-}
+var chart
 
-const populateChart = async (chartData) => {
-    new Chart(document.getElementById('timeseries-canvas').getContext('2d'), {
+const createChart = () => {
+    return new Chart(document.getElementById('timeseries-canvas').getContext('2d'), {
         type: 'line',
-        data: {
-            labels: chartData.date,
-            datasets: [{
-                label: 'Confirmed',
-                data: chartData.confirmed_count,
-                borderColor: 'rgba(247, 90, 34, 1)',
-                fill: false,
-            },
-            {
-                label: 'Deaths',
-                data: chartData.deaths_count,
-                borderColor: 'rgba(255, 0, 0, 1)',
-                fill: false,
-            },
-            {
-                label: 'Recovered',
-                data: chartData.recovered_count,
-                borderColor: 'rgba(2, 134, 2, 1)',
-                fill: false,
-            }
-        ]
-        },
+        data: {},
         options: {
             responsive: true,
             tooltips: {
                 callbacks: {
-                    title: (arg1, arg2) => {
-                        tooltipData = arg1[0]
+                    title: (args) => {
+                        tooltipData = args[0]
                         return new Date(tooltipData.label).toLocaleDateString()
                     },
                 }
@@ -56,13 +32,53 @@ const populateChart = async (chartData) => {
     });
 }
 
-const getChartData = async () => {
+const initChart = async () => {
+    chart = createChart()
+    let chartData = await getChartData()
+    updateChartData(chartData)
+}
+
+const updateChart = async (country) => {
+    let chartData = await getChartData(country)
+    updateChartData(chartData, country)
+}
+
+const updateChartData = async (chartData, country) => {
+    chart.title = !country ? 'Global' : country
+    chart.data = {
+        labels: chartData.date,
+        datasets: [{
+            label: 'Confirmed',
+            data: chartData.confirmed_count,
+            borderColor: 'rgba(247, 90, 34, 1)',
+            fill: false,
+        },
+        {
+            label: 'Deaths',
+            data: chartData.deaths_count,
+            borderColor: 'rgba(255, 0, 0, 1)',
+            fill: false,
+        },
+        {
+            label: 'Recovered',
+            data: chartData.recovered_count,
+            borderColor: 'rgba(2, 134, 2, 1)',
+            fill: false,
+        }
+        ]
+    }
+
+    chart.update(0)
+}
+
+const getChartData = async (country) => {
     try {
         let res = await fetch("http://trackcovid19j.herokuapp.com/global_cases_timeseries", {
-            method: 'GET',
+            method: 'POST',
+            body: JSON.stringify({ 'country': !country ? 'Global' : country }),
             headers: {
-                'Content-Type': 'application/json',
-            }
+                'Content-Type': 'application/json'
+            },
         })
         let chartData = await res.json()
         let dates = chartData.date.map((val) => new Date(val))

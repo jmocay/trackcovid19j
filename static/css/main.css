@@ -8,7 +8,7 @@ body {
     margin: 0;
     display: grid;
     grid-template-columns: 20% 20% 20% 20% 20%;
-    grid-template-rows: 60px 400px auto 60px;
+    grid-template-rows: 80px 400px auto 60px;
     grid-template-areas: "h h h h h "
                          "m m m g g "
                          "c c d r a"
@@ -18,19 +18,21 @@ body {
 header {
     background: rgb(8, 94, 94);
     grid-area: h;
-    line-height: 5px;
+    line-height: 4px;
     padding: 5px 0;
 }
 
 header img {
     float: left;
-    width: 60px;
+    width: 130px;
     height: 100%;
-    padding: 5px 0;
+    padding: 1px 0;
 }
 
 header h1 {
     color: white;
+    font-size: 2.5rem;
+    font-weight: bolder;
     position: relative;
     text-align: center;
 }
@@ -50,7 +52,7 @@ footer {
     grid-area: f;
     line-height: 5px;
     padding: 5px 20px;
-    text-align: right;
+    text-align: left;
 }
 
 footer p,
@@ -58,9 +60,19 @@ footer a {
     color: white;
 }
 
+.div-confirmed,
+.div-deaths,
+.div-recovered,
+.div-active {
+    border-radius: 10px;
+    margin: 2px 2px;
+    display: flex;
+    flex-direction: column;
+}
+
 .div-confirmed {
     color: white;
-    background-color: orangered;
+    background: orangered;
     grid-area: c;
 }
 
@@ -82,51 +94,33 @@ footer a {
     grid-area: a;
 }
 
-.div-confirmed,
-.div-deaths,
-.div-recovered,
-.div-active {
-    border-radius: 10px;
-    margin: 2px 2px;
-    display: block;
-}
-
-.div-confirmed h2,
-.div-deaths h2,
-.div-recovered h2,
-.div-active h2 {
-    font-size: xx-large;
-    text-align: center;
-}
-
-.btn-confirmed-bycountry,
-.btn-deaths-bycountry,
-.btn-recovered-bycountry,
-.btn-active-bycountry {
-    font-size: x-large;
+.div-bycountry-header {
+    font-size: 2.2rem;
+    font-weight: bold;
     color: white;
-    margin-left: 5px;
-    margin-top: 5px;
-    margin-bottom: 0;
+    margin: 8px 8px;
     border: 0px;
-    width: 80%;
+    width: 98%;
+    text-align: center;
+    cursor: pointer;
+    background: transparent;
+}
+
+.div-bycountry-button {
+    font-size: 1.8rem;
+    color: white;
+    margin-left: 4px;
+    margin-top: 4px;
+    border: 0px;
+    width: 98%;
     text-align: left;
+    cursor: pointer;
+    background: transparent;
 }
 
-.btn-confirmed-bycountry {
-    background-color: orangered;
-}
-
-.btn-deaths-bycountry {
-    background-color: red;
-}
-
-.btn-recovered-bycountry {
-    background-color: green;
-}
-
-.btn-active-bycountry {
-    background-color: blue;
+.div-bycountry-button :hover,
+.div-bycountry-button :active {
+    background: darkslategrey;
 }
 
 .div-map {
@@ -155,7 +149,6 @@ footer a {
 }
 
 .div-chart {
-    font-family: sans-serif;
     background-color: rgb(234, 248, 218);
     margin-left: 5px;
     margin-right: 5px;
@@ -165,8 +158,8 @@ footer a {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    width: 640px;
-    height: 640px;
+    width: 720px;
+    height: 400px;
 }
 
 @media screen and (min-width: 800px) {
