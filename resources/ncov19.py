@@ -15,8 +15,7 @@ class ConfirmedCasesMap(Resource):
         }
 
 class GlobalCasesTimeSeries(Resource):
-    def post(self):
-        country = request.json['country']
+    def get(self, country):
         categories = ['confirmed', 'deaths', 'recovered']
         csv_files = [
             'data/time_series_covid19_confirmed_global.csv',

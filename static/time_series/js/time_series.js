@@ -71,11 +71,21 @@ const updateChartData = async (chartData, country) => {
     chart.update(0)
 }
 
+country = !country ? 'Global' : country
+let url = `http://localhost:5000/global_cases_timeseries/${country}`
+let res = await fetch(url, {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+})
+
 const getChartData = async (country) => {
     try {
-        let res = await fetch("http://trackcovid19j.herokuapp.com/global_cases_timeseries", {
-            method: 'POST',
-            body: JSON.stringify({ 'country': !country ? 'Global' : country }),
+        country = !country ? 'Global' : country
+        let url = `http://trackcovid19j.herokuapp.com/global_cases_timeseries/${country}`
+        let res = await fetch(url, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
