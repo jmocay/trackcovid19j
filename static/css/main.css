@@ -87,7 +87,7 @@ footer a {
 .div-recovered,
 .div-active {
     border-radius: 10px;
-    margin: 5px 5px;
+    margin: 2px 2px;
     display: block;
 }
 
@@ -129,12 +129,12 @@ footer a {
     background-color: blue;
 }
 
-#div-map {
-    margin: 0 0;
-    height: 400px;
+.div-map {
+    height: 100%;
+    border-radius: 5px;
 }
 
-.map-spinner {
+.div-spinner {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
     border-top: 16px solid orange;
@@ -154,7 +154,7 @@ footer a {
     100% { transform: rotate(360deg); }
 }
 
-.chart-control {
+.div-chart {
     font-family: sans-serif;
     background-color: rgb(234, 248, 218);
     margin-left: 5px;

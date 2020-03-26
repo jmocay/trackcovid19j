@@ -1,10 +1,10 @@
 const initMap = async () => {
-    const mapDiv = document.getElementById("div-map")
+    const mapDiv = document.getElementById("map-div")
 
     const ncov19Map = L.map(mapDiv)
     ncov19Map.addEventListener('load', (evt) => {
         let spinnerDiv = document.createElement('div')
-        spinnerDiv.className = "map-spinner"
+        spinnerDiv.className = "div-spinner"
         mapDiv.append(spinnerDiv)
     })
     ncov19Map.setView([0, 0], 2)
@@ -42,11 +42,11 @@ const initMap = async () => {
             }
         }
 
-        let spinnerDiv = mapDiv.getElementsByClassName('map-spinner')
+        let spinnerDiv = mapDiv.getElementsByClassName('div-spinner')
         mapDiv.removeChild(spinnerDiv)
     }
     catch (error) {
-        let root = document.getElementById("div-map")
+        let root = document.getElementById("map-div")
         let errmsg = document.createElement("p")
         errmsg.textContent = "Error retrieving chart data."
         root.append(errmsg)
