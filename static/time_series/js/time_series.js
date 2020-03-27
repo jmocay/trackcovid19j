@@ -6,6 +6,22 @@ const createChart = () => {
         data: {},
         options: {
             responsive: true,
+            title : {
+                display: true,
+                fontSize: 24,
+                fontFamily: 'sans-serif',
+                fontStyle: 'bold',
+                fontColor: '#048080',
+            },
+            layout: {
+                padding: {
+                    top:   10, left:  0,
+                    bottom: 0, right: 0,
+                }
+            },
+            legend: {
+                position: 'bottom',
+            },
             tooltips: {
                 callbacks: {
                     title: (args) => {
@@ -34,8 +50,9 @@ const createChart = () => {
 
 const initChart = async () => {
     chart = createChart()
-    let chartData = await getChartData()
-    updateChartData(chartData)
+    let country = 'Global'
+    let chartData = await getChartData(country)
+    updateChartData(chartData, country)
 }
 
 const updateChart = async (country) => {
@@ -44,27 +61,28 @@ const updateChart = async (country) => {
 }
 
 const updateChartData = async (chartData, country) => {
-    chart.title = !country ? 'Global' : country
+    chart.options.title.text = country
     chart.data = {
         labels: chartData.date,
-        datasets: [{
-            label: 'Confirmed',
-            data: chartData.confirmed_count,
-            borderColor: 'rgba(247, 90, 34, 1)',
-            fill: false,
-        },
-        {
-            label: 'Deaths',
-            data: chartData.deaths_count,
-            borderColor: 'rgba(255, 0, 0, 1)',
-            fill: false,
-        },
-        {
-            label: 'Recovered',
-            data: chartData.recovered_count,
-            borderColor: 'rgba(2, 134, 2, 1)',
-            fill: false,
-        }
+        datasets: [
+            {
+                label: 'Confirmed',
+                data: chartData.confirmed_count,
+                borderColor: 'rgba(247, 90, 34, 1)',
+                fill: false,
+            },
+            {
+                label: 'Deaths',
+                data: chartData.deaths_count,
+                borderColor: 'rgba(255, 0, 0, 1)',
+                fill: false,
+            },
+            {
+                label: 'Recovered',
+                data: chartData.recovered_count,
+                borderColor: 'rgba(2, 134, 2, 1)',
+                fill: false,
+            }
         ]
     }
 
@@ -73,7 +91,6 @@ const updateChartData = async (chartData, country) => {
 
 const getChartData = async (country) => {
     try {
-        country = !country ? 'Global' : country
         let url = `http://trackcovid19j.herokuapp.com/global_cases_timeseries/${country}`
         let res = await fetch(url, {
             method: 'GET',

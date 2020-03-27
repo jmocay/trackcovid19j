@@ -54,6 +54,7 @@ const populateCases = async (casesData) => {
         let btn = document.createElement("button")
         btn.textContent = `${casesData['total_' + item.category]} ${item.label}`
         btn.className = "div-bycountry-header"
+        btn.value = 'Global'
         btn.onclick = bycountry_or_global_handler
         root.append(btn)
 
