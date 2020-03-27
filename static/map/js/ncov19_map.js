@@ -48,7 +48,7 @@ const initMap = async () => {
             }
         }
 
-        ncov19Map.flyTo([0.0, 0.0], 2)
+        ncov19Map.flyTo([10.0, 10.0], 1.75)
 
         let spinnerDiv = mapDiv.getElementsByClassName('div-spinner')
         mapDiv.removeChild(spinnerDiv)
@@ -90,7 +90,7 @@ const getCountryLatLong = async (country) => {
 const updateMapView = async (country) => {
     try {
         if (country == 'Global') {
-            ncov19Map.flyTo([0.0, 0.0], 2)
+            ncov19Map.flyTo([10.0, 10.0], 1.75)
         }
         else {
             let latLonData = await getCountryLatLong(country)
