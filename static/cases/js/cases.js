@@ -21,6 +21,7 @@ const getCasesData = async () => {
 
 const bycountry_or_global_handler = (evt) => {
     country = evt.srcElement.value
+    updateMapView(country)
     updateChart(country)
 }
 

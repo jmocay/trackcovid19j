@@ -52,3 +52,14 @@ class CasesByCountry(Resource):
             stats["total_{0}".format(categories[i])] = int(df2[columns[i]].sum())
 
         return stats
+
+class CountryLatLon(Resource):
+    def get(self, country):
+        df = pd.read_csv('data/daily_report.csv')
+        df = df[df['Country_Region'] == country]
+        df = pd.DataFrame(df.groupby(['Country_Region'])[['Lat', 'Long_']].mean())
+        return {
+            "country": str(country),
+            "lat": float(df['Lat']),
+            "lon": float(df['Long_']),
+        }

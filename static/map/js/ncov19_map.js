@@ -1,19 +1,25 @@
+var ncov19Map
+
 const initMap = async () => {
     const mapDiv = document.getElementById("map-div")
 
-    const ncov19Map = L.map(mapDiv)
+    ncov19Map = L.map(mapDiv)
+
     ncov19Map.addEventListener('load', (evt) => {
         let spinnerDiv = document.createElement('div')
         spinnerDiv.className = "div-spinner"
         mapDiv.append(spinnerDiv)
     })
+
     ncov19Map.setView([0, 0], 2)
+
     const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     const tileLayer = L.tileLayer(
         tileUrl, { attribution }
     )
     tileLayer.addTo(ncov19Map)
+
     const ncov19Icon = L.icon({
         iconUrl: './static/map/images/corona-red.ico',
         iconSize: [32, 32],
@@ -42,6 +48,8 @@ const initMap = async () => {
             }
         }
 
+        ncov19Map.flyTo([0.0, 0.0], 2)
+
         let spinnerDiv = mapDiv.getElementsByClassName('div-spinner')
         mapDiv.removeChild(spinnerDiv)
     }
@@ -54,7 +62,7 @@ const initMap = async () => {
 }
 
 const getNCov19MapData = async () => {
-    let res = await fetch("http://trackcovid19j.herokuapp.com/global_confirmed_cases", {
+    let res = await fetch("http://localhost:5000/global_confirmed_cases", {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -64,4 +72,32 @@ const getNCov19MapData = async () => {
     let mapData = await res.json()
 
     return mapData
+}
+
+const getCountryLatLong = async (country) => {
+    let url = `http://trackcovid19j.herokuapp.com/country_latlon/${country}`
+    let res = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+
+    let latLonData = await res.json()
+    return latLonData
+}
+
+const updateMapView = async (country) => {
+    try {
+        if (country == 'Global') {
+            ncov19Map.flyTo([0.0, 0.0], 2)
+        }
+        else {
+            let latLonData = await getCountryLatLong(country)
+            ncov19Map.flyTo([latLonData.lat, latLonData.lon], 5)
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
 }
