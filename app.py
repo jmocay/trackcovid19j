@@ -21,11 +21,11 @@ api.add_resource(CasesByCountry, "/cases_bycountry")
 api.add_resource(CountryLatLon, "/country_latlon/<country>")
 api.add_resource(AllCountries, "/all_countries")
 
-@app.route('/')
+@app.route('/old')
 def index():
     return render_template("index.html")
 
-@app.route('/new')
+@app.route('/')
 def index_nav():
     return render_template("index_nav.html")
 
