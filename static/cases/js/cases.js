@@ -5,7 +5,7 @@ const initCases = async () => {
 
 const getCasesData = async () => {
     try {
-        let res = await fetch("http://trackcovid19j.herokuapp.com/cases_bycountry", {
+        let res = await fetch("http://localhost:5000/cases_bycountry", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -52,11 +52,10 @@ const populateCases = async (casesData) => {
     cases.forEach((item) => {
         let root = document.getElementById(item.id)
 
-        let btn = document.createElement("button")
-        btn.textContent = `${casesData['total_' + item.category]} ${item.label}`
-        btn.className = "div-bycountry-header"
-        btn.value = 'Global'
-        btn.onclick = bycountry_or_global_handler
+        let a = document.createElement("a")
+        a.textContent = `${casesData['total_' + item.category]} ${item.label}`
+        a.className = "confirmed-header"
+        // a.onclick = bycountry_or_global_handler
         root.append(btn)
 
         let i = 0
@@ -65,7 +64,7 @@ const populateCases = async (casesData) => {
             btn.textContent = `${casesData[item.category][i]} ${country}`
             btn.className = "div-bycountry-button"
             btn.value = country
-            btn.onclick = bycountry_or_global_handler
+            // a.onclick = bycountry_or_global_handler
             root.append(btn)
             i++
         })

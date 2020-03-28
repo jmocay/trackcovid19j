@@ -1,0 +1,255 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.flex-container {
+    position: fixed;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.logo {
+    flex-grow: 1;
+}
+
+.logo img {
+    float: left;
+    width: 100%;
+    height: 100%;
+}
+
+.header {
+    text-align: center;
+    vertical-align: text-top;
+    flex-grow: 16;
+}
+
+.header b {
+    color: white;
+    font-size: 2rem;
+    font-weight: bolder;
+}
+
+.navbar {
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.logo,
+.header,
+.navbar {
+    height: 40px;
+    background: rgb(8, 94, 94);;
+}
+
+.navbar a {
+    float: right;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.navbar a:hover {
+    background: #ddd;
+    color: black;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background: whitesmoke;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: black;
+    background: whitesmoke;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: black;
+    background: darkgray;
+    border-radius: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.sidenav .closebtn {
+    /* position: absolute; */
+    float: right;
+    top: 0;
+    right: 5px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+.main {
+    margin-top: 40px;
+    /* height: 1500px; */
+    height: 1024px;
+    display: grid;
+    grid-template-rows: "400px auto 4px";
+    grid-template-columns: "29% 22% 22% 22%";
+    grid-template-areas: "map map map chrt chrt"
+                            "cnf cnf dth rcv act"
+                            "ftr ftr ftr ftr ftr";
+}
+
+.map-container {
+    background: lightyellow;
+    grid-area:  map;
+    margin: 4px 4px;
+    border-radius: 10px;
+}
+
+.map {
+    min-height: 400px;
+    height: 100%;
+}
+
+.chart-container {
+    background: lightcoral;
+    grid-area: chrt;
+    margin: 4px 4px;
+    border-radius: 10px;
+}
+
+.confirmed {
+    color: white;
+    background: orangered;
+    grid-area: cnf;
+}
+
+.deaths {
+    color: white;
+    background: red;
+    grid-area: dth;
+}
+
+.recovered {
+    color: white;
+    background: green;
+    grid-area: rcv;
+}
+
+.active {
+    color: white;
+    background: blue;
+    grid-area: act;
+}
+
+.confirmed,
+.deaths,
+.recovered,
+.active {
+    margin: 4px 4px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.confirmed a,
+.deaths a,
+.recovered a,
+.active a {
+    color: white;
+    text-decoration: none;
+}
+
+.cases-by-country-header,
+.confirmed-header,
+.deaths-header,
+.recovered-header,
+.active-header {
+    font-size: 2.2rem;
+    font-weight: bold;
+    margin: 8px 8px;
+    /* color: white;
+    margin: 8px 8px;
+    border: 0px;
+    width: 98%; */
+    text-align: center;
+    cursor: pointer;
+    background: transparent;
+}
+
+.cases-by-country-item,
+.confirmed-item,
+.deaths-item,
+.recovered-item,
+.active-item {
+    font-size: 1.8rem;
+    margin: 2px 4px;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+}
+
+.cases-by-country-item :hover,
+.confirmed-item :hover,
+.deaths-item :hover,
+.recovered-item :hover,
+.active-item :hover {
+    font-size: 1.8rem;
+    margin: 2px 4px;
+    text-align: left;
+    cursor: pointer;
+    color: black;
+    background: darkkhaki;
+    border-radius: 10;
+}
+
+.chart-canvas {
+    width: 25%;
+    height: 25%;
+}
+
+footer {
+    height: 40px;
+    color: white;
+    background: black;
+    grid-area: ftr;
+}
+
+.spinner {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid orange;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

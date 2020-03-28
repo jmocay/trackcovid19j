@@ -6,7 +6,7 @@ import json
 class ConfirmedCasesMap(Resource):
     def get(self):
         df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Combined_Key', 'Lat', 'Long_'])['Confirmed'].sum())
-        df = df[df['Confirmed'] > 0]
+        df = df[ df['Confirmed'] > 0 ]
         return {
             "location": [str(idx[0]) for idx in df.index],
             "lat": [float(idx[1]) for idx in df.index],
@@ -56,10 +56,18 @@ class CasesByCountry(Resource):
 class CountryLatLon(Resource):
     def get(self, country):
         df = pd.read_csv('data/daily_report.csv')
-        df = df[df['Country_Region'] == country]
-        df = pd.DataFrame(df.groupby(['Country_Region'])[['Lat', 'Long_']].mean())
+        df = df[ df['Country_Region'] == country ]
+        df = pd.DataFrame(df.groupby(['Country_Region'])[ ['Lat', 'Long_'] ].mean())
         return {
             "country": str(country),
             "lat": float(df['Lat']),
             "lon": float(df['Long_']),
+        }
+
+class AllCountries(Resource):
+    def get(self):
+        df = pd.read_csv('data/daily_report.csv')
+        df = pd.DataFrame(df.groupby(['Country_Region'])[['Country_Region']].first())
+        return {
+            "countries": [ str(country) for country in df.index ],
         }

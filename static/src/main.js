@@ -1,0 +1,295 @@
+var sideBar;
+var confirmedCasesMap
+var casesChart
+var casesByCountry
+
+appConfig = {
+    env: 'DEV',
+    serverUrl: {
+        DEV: 'http://localhost:5000/',
+        PROD: 'http://trackcovid19j.herokuapp.com/',
+    },
+    urlPrefix: '',
+}
+
+window.onload = async () => {
+    appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
+
+    sideBar = new Sidebar(appConfig)
+    sideBar.initialize()
+
+    confirmedCasesMap = new ConfirmedCasesMap(appConfig)
+    confirmedCasesMap.initialize()
+
+    casesChart = new CasesChart(appConfig)
+    casesChart.initialize()
+
+    casesByCountry = new CasesByCountry(appConfig)
+    casesByCountry.initialize()
+
+}
+
+class Sidebar {
+
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
+        this.visible = false
+    }
+
+    initialize  = async () => {
+        let sidebarData = await sideBar.getSidebarData()
+        let navbar = document.getElementById("navbar-country")
+        navbar.onclick = this.toggleSidebar.bind(this)
+        this.show(sidebarData)
+    }
+
+    getSidebarData = async (country) => {
+        try {
+            let url = `${this.urlPrefix}/all_countries`
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let sidebarData = await res.json()
+            return sidebarData;
+        }
+        catch (err) {
+            console.log(err)
+            throw error
+        }
+    }
+
+    openSidebar = () => {
+        document.getElementById("sidebar").style.width = "250px";
+        document.getElementById("sidebar").style.zIndex = 1000;
+        this.visible = true
+    }
+
+    closeSidebar = () => {
+        document.getElementById("sidebar").style.width = "0"
+        this.visible = false
+    }
+
+    toggleSidebar = () => {
+        if (this.visible) {
+            this.closeSidebar()
+        }
+        else {
+            this.openSidebar()
+        }
+    }
+
+    sidebarClickedHandler = (country, evt) => {
+        confirmedCasesMap.flyTo(country)
+        this.closeSidebar()
+    }
+
+    show = (sidebarData) => {
+        let root = document.getElementById('sidebar')
+        let a = document.getElementById("sidebar-closebtn")
+        a.onclick = this.closeSidebar.bind(this)
+        sidebarData['countries'].forEach((country) => {
+            a = document.createElement("a")
+            a.textContent = `${country}`
+            a.href = "javascript:void(0)"
+            a.onclick = this.sidebarClickedHandler.bind(this, country)
+            root.append(a)
+        })
+    }
+}
+
+class ConfirmedCasesMap {
+
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
+    }
+
+    initialize = async () => {
+        let mapDiv = document.getElementById("map-div")
+        let ccMap = L.map(mapDiv)
+        ccMap.addEventListener('load', (evt) => {
+            let spinnerDiv = document.createElement('div')
+            spinnerDiv.className = "spinner"
+            mapDiv.append(spinnerDiv)
+        })
+        ccMap.setView([0, 0], 2)
+        let attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        let tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        let tileLayer = L.tileLayer(
+            tileUrl, { attribution }
+        )
+        tileLayer.addTo(ccMap)
+        this.mapDiv = mapDiv
+        this.ccMap = ccMap
+
+        let mapData = await this.getMapData()
+        this.show(mapData)
+    }
+
+    getMapData = async () => {
+        try {
+            let res = await fetch(`${this.urlPrefix}/global_confirmed_cases`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            let mapData = await res.json()
+            return mapData
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    getCountryLatLong = async (country) => {
+        try {
+            let url = `${this.urlPrefix}/country_latlon/${country}`
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            let latLonData = await res.json()
+            return latLonData
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    show = (mapData) => {
+        let ncov19Icon = L.icon({
+            iconUrl: './static/map/images/corona-red.ico',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [-5, -5],
+        });
+        for (let i = 0; i < mapData['lat'].length; i++) {
+            if (mapData['count'][i] >= 20) {
+                let layer = L.marker(
+                    [
+                        mapData['lat'][i],
+                        mapData['lon'][i]
+                    ],
+                    { icon: ncov19Icon }
+                ).addTo(this.ccMap)
+
+                layer.bindTooltip(`
+                        Location: <b>${mapData['location'][i]}</b><br>
+                        Case(s) confirmed: <b>${mapData['count'][i]}</b>
+                    `).openTooltip()
+                layer.closeTooltip()
+            }
+        }
+
+        this.flyTo('Global')
+
+        let spinnerDiv = this.mapDiv.getElementsByClassName('spinner')
+        // this.mapDiv.remove(spinnerDiv)
+    }
+
+    flyTo = async (country) => {
+        if (country == 'Global') {
+            this.ccMap.flyTo([0, -10], 1.75)
+        }
+        else {
+            let latLonData = await this.getCountryLatLong(country)
+            this.ccMap.flyTo([latLonData.lat, latLonData.lon], 5)
+        }
+    }
+}
+
+class CasesChart {
+
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
+    }
+
+    initialize = async () => {
+
+    }
+}
+
+class CasesByCountry {
+
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
+    }
+
+    initialize = async () => {
+        let casesData = await this.getCasesByCountryData()
+        this.show(casesData)
+    }
+
+    getCasesByCountryData = async () => {
+        try {
+            let res = await fetch(`${this.urlPrefix}/cases_bycountry`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            let casesData = await res.json()
+            return casesData
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    casesByCountryClickedHandler = (country, evt) => {
+        // console.log('casesByCountryClickedHandler:country', country)
+        // console.log('casesByCountryClickedHandler:evt', evt)
+        confirmedCasesMap.flyTo(country)
+    }
+
+    show = async (casesData) => {
+        console.log('show', casesData)
+        let cases = [
+            {
+                id: 'confirmed-cases',
+                category: 'confirmed',
+                label: 'Confirmed',
+            },
+            {
+                id: 'deaths-cases',
+                category: 'deaths',
+                label: 'Deaths',
+            },
+            {
+                id: 'recovered-cases',
+                category: 'recovered',
+                label: 'Recovered',
+            },
+            {
+                id: 'active-cases',
+                category: 'active',
+                label: 'Active',
+            },
+        ]
+
+        cases.forEach((item) => {
+            let root = document.getElementById(item.id)
+
+            let a = document.createElement("a")
+            a.textContent = `${casesData['total_' + item.category]} ${item.label}`
+            a.className = "cases-by-country-header"
+            a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
+            root.append(a)
+
+            let i = 0
+            casesData['countries_' + item.category].forEach((country) => {
+                a = document.createElement("a")
+                a.textContent = `${casesData[item.category][i]} ${country}`
+                a.className = "cases-by-country-item"
+                a.onclick = this.casesByCountryClickedHandler.bind(this, country)
+                root.append(a)
+                i++
+            })
+        })
+    }
+}
