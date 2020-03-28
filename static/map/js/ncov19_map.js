@@ -75,7 +75,7 @@ const getNCov19MapData = async () => {
 }
 
 const getCountryLatLong = async (country) => {
-    let url = `http://localhost:5000/country_latlon/${country}`
+    let url = `http://trackcovid19j.herokuapp.com/country_latlon/${country}`
     let res = await fetch(url, {
         method: 'GET',
         headers: {

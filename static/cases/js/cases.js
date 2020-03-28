@@ -5,7 +5,7 @@ const initCases = async () => {
 
 const getCasesData = async () => {
     try {
-        let res = await fetch("http://localhost:5000/cases_bycountry", {
+        let res = await fetch("http://trackcovid19j.herokuapp.com/cases_bycountry", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
