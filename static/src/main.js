@@ -15,12 +15,6 @@ appConfig = {
 window.onload = async () => {
     appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
 
-    let spinner = document.createElement('div')
-    spinner.id = "spinner"
-    spinner.className = "spinner"
-    spinner.zIndex = -1000
-    document.body.append(spinner)
-
     sideBar = new Sidebar(appConfig)
     sideBar.initialize()
 
@@ -93,15 +87,22 @@ class Sidebar {
     }
 
     show = (sidebarData) => {
-        let root = document.getElementById('sidebar')
-        let a = document.getElementById("sidebar-closebtn")
-        a.onclick = this.closeSidebar.bind(this)
-        sidebarData['countries'].forEach((country) => {
-            a = document.createElement("a")
+        let createSidebarItem = (country, root) => {
+            let a = document.createElement("a")
             a.textContent = `${country}`
             a.href = "javascript:void(0)"
             a.onclick = this.sidebarClickedHandler.bind(this, country)
             root.append(a)
+        }
+
+        let root = document.getElementById('sidebar')
+        let a = document.getElementById("sidebar-closebtn")
+        a.onclick = this.closeSidebar.bind(this)
+        
+        createSidebarItem('Global', root)
+        
+        sidebarData['countries'].forEach((country) => {
+            createSidebarItem(country, root)
         })
     }
 }
@@ -112,11 +113,22 @@ class ConfirmedCasesMap {
         this.urlPrefix = cfg.urlPrefix
     }
 
+    getSpinner = () => {        
+        let spinner = document.getElementById("spinner")
+        if (spinner === null) {
+            spinner = document.createElement('div')
+            spinner.id = "spinner"
+            spinner.className = "spinner"
+            document.getElementById("map-div").append(spinner)
+        }
+        return spinner
+    }
+
     initialize = async () => {
         let mapDiv = document.getElementById("map-div")
         let ccMap = L.map(mapDiv)
         ccMap.addEventListener('load', (evt) => {
-            spinner = document.getElementById("spinner")
+            let spinner = this.getSpinner()
             spinner.zIndex = 1000
         })
         ccMap.setView([0, 0], 2)
@@ -191,8 +203,8 @@ class ConfirmedCasesMap {
             }
         }
 
-        spinner = document.getElementById("spinner")
-        spinner.zIndex = -1000
+        let spinner = this.getSpinner()
+        spinner.zIndex = 1000
 
         this.flyTo('Global')
     }
