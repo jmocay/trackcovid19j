@@ -1,6 +1,7 @@
 body {
     font-family: sans-serif;
     margin: 0;
+    background: white;
 }
 
 .flex-container {
@@ -89,7 +90,6 @@ body {
 .sidenav a:hover {
     color: black;
     background: darkgray;
-    /* border-radius: 10px; */
     border-radius: 25px;
     margin-left: 5px;
     margin-right: 5px;
@@ -115,21 +115,23 @@ body {
     grid-template-rows: "400px auto 4px";
     grid-template-columns: "20% 30% 20% 15% 15%";
     grid-template-areas: "map map map chrt chrt"
-                            "cnf cnf dth rcv act"
-                            "ftr ftr ftr ftr ftr";
+                         " cnf cnf dth rcv act"
+                         " cdl cdl ddl rdl adl"
+                         " ftr ftr ftr ftr ftr";
 }
 
 .map-container {
     background: lightyellow;
     grid-area:  map;
     margin: 4px 4px;
-    border-radius: 10px;
+    background: transparent;
 }
 
 .map {
     min-width: 720px;
     min-height: 400px;
     height: 100%;
+    border-radius: 10px;
 }
 
 .chart-container {
@@ -139,53 +141,93 @@ body {
     border-radius: 10px;
 }
 
-.confirmed {
+.confirmed-summary,
+.confirmed-details {
     color: white;
     background: orangered;
     grid-area: cnf;
 }
 
-.deaths {
-    color: white;
-    background: red;
-    grid-area: dth;
+.confirmed-summary {
+    grid-area: cnf;
+}
+.confirmed-details {
+    grid-area: cdl;
 }
 
-.recovered {
+.deaths-summary,
+.deaths-details {
+    color: white;
+    background: red;
+}
+
+.deaths-summary {
+    grid-area: dth;
+}
+.deaths-details {
+    grid-area: ddl;
+}
+
+.recovered-summary,
+.recovered-details {
     color: white;
     background: green;
     grid-area: rcv;
 }
 
-.active {
-    color: white;
-    background: blue;
-    grid-area: act;
+.recovered-summary {
+    grid-area: rcv;
+}
+.recovered-details {
+    grid-area: rdl;
 }
 
-.confirmed,
-.deaths,
-.recovered,
-.active {
+.active-summary,
+.active-details {
+    color: white;
+    background: blue;
+}
+
+.active-summary {
+    grid-area: act;
+}
+.active-details {
+    grid-area: adl;
+}
+
+.confirmed-summary,
+.deaths-summary,
+.recovered-summary,
+.active-summary {
     margin: 4px 4px;
     border-radius: 10px;
+    text-align: center;
     display: flex;
     flex-direction: column;
 }
 
-.confirmed a,
-.deaths a,
-.recovered a,
-.active a {
+.confirmed-details,
+.deaths-details,
+.recovered-details,
+.active-details {
+    border-radius: 10px;
+    margin: 4px 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.confirmed-details a,
+.deaths-details a,
+.recovered-details a,
+.active-details a {
+    margin-left: 10px;
     color: white;
     text-decoration: none;
 }
 
 .cases-by-country-header {
-    font-size: 2.2rem;
+    font-size: 2.3rem;
     font-weight: bold;
-    margin: 8px 8px;
-    text-align: center;
     cursor: pointer;
     background: transparent;
 }
@@ -196,16 +238,6 @@ body {
     text-align: left;
     cursor: pointer;
     background: transparent;
-}
-
-.cases-by-country-item :hover {
-    font-size: 1.8rem;
-    margin: 2px 4px;
-    text-align: left;
-    cursor: pointer;
-    color: black;
-    background: darkkhaki;
-    border-radius: 10;
 }
 
 .line-chart {
@@ -225,22 +257,30 @@ body {
     .chart-container div:first-child {
         max-width: 100%;
         max-height: 100%;
-        /* float: left; */
         float: inherit;
     }
 }
 
 footer {
+    display: inline-block;
     height: 40px;
     color: white;
     background: black;
     grid-area: ftr;
 }
 
+footer p {
+    float: left;
+}
+footer a {
+    color: inherit;
+    text-decoration: none;
+}
+
 .spinner {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid orange;
+    border-top: 16px solid rgb(238, 91, 22);
     width: 120px;
     height: 120px;
     -webkit-animation: spin 2s linear infinite;

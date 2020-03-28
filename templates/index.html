@@ -26,7 +26,7 @@
 
         <div class="flex-container">
             <div class="logo">
-                <img src="static/images/logo.ico" alt="COVID-19 Tracker Logo">
+                <img src="static/images/logo.ico" alt="COVID-19 Tracker Logo" title="Author: Joel Ocay, Email: jmocay72@gmail.com">
             </div>
 
             <div class="header">
@@ -55,20 +55,21 @@
                     <canvas id="line-chart" class="line-chart-canvas"></canvas>
                 </div>
             </div>
-
-            <div id="confirmed-cases" class="confirmed">
-            </div>
-
-            <div id="deaths-cases" class="deaths">
-            </div>
-
-            <div id="recovered-cases" class="recovered">
-            </div>
-
-            <div id="active-cases" class="active">
-            </div>
-
+            
+            <div id="confirmed-cases-summary" class="confirmed-summary"></div>
+            <div id="confirmed-cases-details" class="confirmed-details"></div>
+            
+            <div id="deaths-cases-summary" class="deaths-summary"></div>
+            <div id="deaths-cases-details" class="deaths-details"></div>
+            
+            <div id="recovered-cases-summary" class="recovered-summary"></div>
+            <div id="recovered-cases-details" class="recovered-details"></div>
+        
+            <div id="active-cases-summary" class="active-summary"></div>
+            <div id="active-cases-details" class="active-details"></div>
+            
             <footer>
+                <p>Data Source: <a href="https://github.com/CSSEGISandData/COVID-19">2019 Novel Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</a></p>
             </footer>
         </div>
 

@@ -38,19 +38,34 @@ class GlobalCasesTimeSeries(Resource):
         stats['date'] = [str(dt) for dt in df.index]
         return stats
 
-class CasesByCountry(Resource):
+class AllCases(Resource):
     def get(self):
         stats = {}
         categories = ['confirmed', 'deaths', 'recovered', 'active']
         columns = ['Confirmed', 'Deaths', 'Recovered', 'Active']
-
         df = pd.read_csv('data/daily_report.csv')
         for i in range(len(categories)):
             df2 = df.loc[:, ['Country_Region', columns[i]]].groupby('Country_Region').sum().sort_values(columns[i], ascending=False)
             stats["countries_{0}".format(categories[i])] = [str(country) for country in df2.index]
             stats["{0}".format(categories[i])] = [int(count) for count in df2[columns[i]]]
             stats["total_{0}".format(categories[i])] = int(df2[columns[i]].sum())
+        return stats
 
+class CasesByCountry(Resource):
+    def get(self, country):
+        stats = {}
+        columns = ['Confirmed', 'Deaths', 'Recovered', 'Active']
+        df = pd.read_csv('data/daily_report.csv')
+        if country == 'Global':
+            ser = df.loc[:, columns ].sum()
+        else:
+            ser = df[ df['Country_Region'] == country ].loc[:, columns ].sum()
+        stats = {
+            "confirmed": int(ser['Confirmed']),
+            "deaths": int(ser['Deaths']),
+            "recovered": int(ser['Recovered']),
+            "active": int(ser['Active']),
+        }
         return stats
 
 class CountryLatLon(Resource):

@@ -4,7 +4,7 @@ var casesChart
 var casesByCountry
 
 appConfig = {
-    env: 'PROD',
+    env: 'DEV',
     serverUrl: {
         DEV: 'http://localhost:5000/',
         PROD: 'http://trackcovid19j.herokuapp.com/',
@@ -27,6 +27,44 @@ window.onload = async () => {
     casesByCountry = new CasesByCountry(appConfig)
     casesByCountry.initialize()
 
+}
+
+const getCasesByCountry = async (country) => {
+    try {
+        let url = `${appConfig.urlPrefix}/cases_bycountry/${country}`
+        let res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        let byCountryData = await res.json()
+        return byCountryData;
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+const updateSummaryStats = async (country) => {
+    let categories = ['confirmed', 'deaths', 'recovered', 'active']
+    try {
+        let byCountryData = await getCasesByCountry(country)
+        categories.forEach((category) => {
+            let a = document.getElementById(`${category}-summary`)
+            if (a) {
+                if (byCountryData[category] > 0) {
+                    a.textContent = `${byCountryData[category]}`                    
+                }
+                else {
+                    a.textContent = "0 or na"
+                }
+            }
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
 }
 
 class Sidebar {
@@ -57,7 +95,6 @@ class Sidebar {
         }
         catch (err) {
             console.log(err)
-            throw error
         }
     }
 
@@ -84,6 +121,7 @@ class Sidebar {
     sidebarClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
+        updateSummaryStats(country)
         this.closeSidebar()
     }
 
@@ -186,11 +224,12 @@ class ConfirmedCasesMap {
             iconAnchor: [16, 16],
             popupAnchor: [-5, -5],
         });
-        for (let i = 0; i < mapData['lat'].length; i++) {
+
+        mapData['lat'].forEach((lat, i) => {
             if (mapData['count'][i] >= 20) {
                 let layer = L.marker(
                     [
-                        mapData['lat'][i],
+                        lat,
                         mapData['lon'][i]
                     ],
                     { icon: ncov19Icon }
@@ -202,7 +241,7 @@ class ConfirmedCasesMap {
                     `).openTooltip()
                 layer.closeTooltip()
             }
-        }
+        })
 
         let spinner = this.getSpinner()
         spinner.zIndex = 1000
@@ -349,7 +388,7 @@ class CasesByCountry {
 
     getCasesByCountryData = async () => {
         try {
-            let res = await fetch(`${this.urlPrefix}/cases_bycountry`, {
+            let res = await fetch(`${this.urlPrefix}/all_cases`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -366,42 +405,54 @@ class CasesByCountry {
     casesByCountryClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
-        
+        updateSummaryStats(country)
     }
 
     show = async (casesData) => {
         let cases = [
             {
-                id: 'confirmed-cases',
+                idSummary: 'confirmed-cases-summary',
+                idDetails: 'confirmed-cases-details',
                 category: 'confirmed',
                 label: 'Confirmed',
             },
             {
-                id: 'deaths-cases',
+                idSummary: 'deaths-cases-summary',
+                idDetails: 'deaths-cases-details',
                 category: 'deaths',
                 label: 'Deaths',
             },
             {
-                id: 'recovered-cases',
+                idSummary: 'recovered-cases-summary',
+                idDetails: 'recovered-cases-details',
                 category: 'recovered',
                 label: 'Recovered',
             },
             {
-                id: 'active-cases',
+                idSummary: 'active-cases-summary',
+                idDetails: 'active-cases-details',
                 category: 'active',
                 label: 'Active',
             },
         ]
 
         cases.forEach((item) => {
-            let root = document.getElementById(item.id)
+            let root = document.getElementById(item.idSummary)
 
             let a = document.createElement("a")
-            a.textContent = `${casesData['total_' + item.category]} ${item.label}`
+            a.textContent = `${item.label}`
             a.className = "cases-by-country-header"
             a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
             root.append(a)
 
+            a = document.createElement("a")
+            a.textContent = `${casesData['total_' + item.category]} `
+            a.id = `${item.category}-summary`
+            a.className = "cases-by-country-header"
+            a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
+            root.append(a)
+
+            root = document.getElementById(item.idDetails)
             casesData['countries_' + item.category].forEach((country, i) => {
                 a = document.createElement("a")
                 a.textContent = `${casesData[item.category][i]} ${country}`
