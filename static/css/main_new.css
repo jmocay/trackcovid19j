@@ -10,6 +10,7 @@ body {
     flex-direction: row;
     flex-wrap: nowrap;
     width: 100%;
+    z-index: 500;    
 }
 
 .logo {
@@ -112,7 +113,7 @@ body {
     height: 1024px;
     display: grid;
     grid-template-rows: "400px auto 4px";
-    grid-template-columns: "29% 22% 22% 22%";
+    grid-template-columns: "20% 30% 20% 15% 15%";
     grid-template-areas: "map map map chrt chrt"
                             "cnf cnf dth rcv act"
                             "ftr ftr ftr ftr ftr";
@@ -126,12 +127,13 @@ body {
 }
 
 .map {
+    min-width: 720px;
     min-height: 400px;
     height: 100%;
 }
 
 .chart-container {
-    background: lightcoral;
+    background: lightgoldenrodyellow;
     grid-area: chrt;
     margin: 4px 4px;
     border-radius: 10px;
@@ -179,28 +181,16 @@ body {
     text-decoration: none;
 }
 
-.cases-by-country-header,
-.confirmed-header,
-.deaths-header,
-.recovered-header,
-.active-header {
+.cases-by-country-header {
     font-size: 2.2rem;
     font-weight: bold;
     margin: 8px 8px;
-    /* color: white;
-    margin: 8px 8px;
-    border: 0px;
-    width: 98%; */
     text-align: center;
     cursor: pointer;
     background: transparent;
 }
 
-.cases-by-country-item,
-.confirmed-item,
-.deaths-item,
-.recovered-item,
-.active-item {
+.cases-by-country-item {
     font-size: 1.8rem;
     margin: 2px 4px;
     text-align: left;
@@ -208,11 +198,7 @@ body {
     background: transparent;
 }
 
-.cases-by-country-item :hover,
-.confirmed-item :hover,
-.deaths-item :hover,
-.recovered-item :hover,
-.active-item :hover {
+.cases-by-country-item :hover {
     font-size: 1.8rem;
     margin: 2px 4px;
     text-align: left;
@@ -222,9 +208,26 @@ body {
     border-radius: 10;
 }
 
-.chart-canvas {
-    width: 25%;
-    height: 25%;
+.line-chart {
+    margin: 0 0;
+    padding: 0 0;
+}
+
+.line-chart-canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    min-width: 120px;
+    height: 400px;
+}
+
+@media screen and (min-width: 800px) {
+    .chart-container div:first-child {
+        max-width: 100%;
+        max-height: 100%;
+        /* float: left; */
+        float: inherit;
+    }
 }
 
 footer {

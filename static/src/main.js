@@ -83,6 +83,7 @@ class Sidebar {
 
     sidebarClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
+        casesChart.update(country)
         this.closeSidebar()
     }
 
@@ -211,7 +212,7 @@ class ConfirmedCasesMap {
 
     flyTo = async (country) => {
         if (country == 'Global') {
-            this.ccMap.flyTo([0, -10], 1.75)
+            this.ccMap.flyTo([0, 0], 1.5)
         }
         else {
             let latLonData = await this.getCountryLatLong(country)
@@ -224,10 +225,114 @@ class CasesChart {
 
     constructor(cfg) {
         this.urlPrefix = cfg.urlPrefix
+        this.chart = this.create();
     }
 
     initialize = async () => {
+        let country = 'Global'
+        let chartData = await this.getData(country)
+        this.show(chartData, country)
+    }
 
+    update = async (country) => {
+        let chartData = await this.getData(country)
+        this.show(chartData, country)
+    }
+
+    create = () => {
+        return new Chart(document.getElementById('line-chart').getContext('2d'), {
+            type: 'line',
+            data: {},
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    fontSize: 24,
+                    fontFamily: 'sans-serif',
+                    fontStyle: 'bold',
+                    fontColor: '#048080',
+                },
+                layout: {
+                    padding: {
+                        top: 10, left: 0,
+                        bottom: 0, right: 0,
+                    }
+                },
+                legend: {
+                    position: 'bottom',
+                },
+                tooltips: {
+                    callbacks: {
+                        title: (args) => {
+                            let tooltipData = args[0]
+                            return new Date(tooltipData.label).toLocaleDateString()
+                        },
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            callback: (xLabel, index, values) => {
+                                return xLabel.toLocaleDateString()
+                            }
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false,
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    show = async (chartData, country) => {
+        this.chart.options.title.text = country
+        this.chart.data = {
+            labels: chartData.date,
+            datasets: [
+                {
+                    label: 'Confirmed',
+                    data: chartData.confirmed_count,
+                    borderColor: 'rgba(247, 90, 34, 1)',
+                    fill: false,
+                },
+                {
+                    label: 'Deaths',
+                    data: chartData.deaths_count,
+                    borderColor: 'rgba(255, 0, 0, 1)',
+                    fill: false,
+                },
+                {
+                    label: 'Recovered',
+                    data: chartData.recovered_count,
+                    borderColor: 'rgba(2, 134, 2, 1)',
+                    fill: false,
+                }
+            ]
+        }
+
+        this.chart.update(0)
+    }
+
+    getData = async (country) => {
+        try {
+            let url = `${this.urlPrefix}/global_cases_timeseries/${country}`
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let chartData = await res.json()
+            let dates = chartData.date.map((val) => new Date(val))
+            chartData.date = dates
+            return chartData;
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 }
 
@@ -259,13 +364,12 @@ class CasesByCountry {
     }
 
     casesByCountryClickedHandler = (country, evt) => {
-        // console.log('casesByCountryClickedHandler:country', country)
-        // console.log('casesByCountryClickedHandler:evt', evt)
         confirmedCasesMap.flyTo(country)
+        casesChart.update(country)
+        
     }
 
     show = async (casesData) => {
-        console.log('show', casesData)
         let cases = [
             {
                 id: 'confirmed-cases',
@@ -298,14 +402,12 @@ class CasesByCountry {
             a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
             root.append(a)
 
-            let i = 0
-            casesData['countries_' + item.category].forEach((country) => {
+            casesData['countries_' + item.category].forEach((country, i) => {
                 a = document.createElement("a")
                 a.textContent = `${casesData[item.category][i]} ${country}`
                 a.className = "cases-by-country-item"
                 a.onclick = this.casesByCountryClickedHandler.bind(this, country)
                 root.append(a)
-                i++
             })
         })
     }
