@@ -22,8 +22,8 @@ api.add_resource(CountryLatLon, "/country_latlon/<country>")
 api.add_resource(AllCountries, "/all_countries")
 
 @app.route('/')
-def index_nav():
-    return render_template("index_nav.html")
+def index():
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=False)
