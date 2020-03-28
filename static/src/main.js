@@ -181,7 +181,7 @@ class ConfirmedCasesMap {
 
     show = (mapData) => {
         let ncov19Icon = L.icon({
-            iconUrl: './static/map/images/corona-red.ico',
+            iconUrl: './static/images/corona-red.ico',
             iconSize: [32, 32],
             iconAnchor: [16, 16],
             popupAnchor: [-5, -5],
