@@ -15,6 +15,12 @@ appConfig = {
 window.onload = async () => {
     appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
 
+    let spinner = document.createElement('div')
+    spinner.id = "spinner"
+    spinner.className = "spinner"
+    spinner.zIndex = -1000
+    document.body.append(spinner)
+
     sideBar = new Sidebar(appConfig)
     sideBar.initialize()
 
@@ -110,9 +116,8 @@ class ConfirmedCasesMap {
         let mapDiv = document.getElementById("map-div")
         let ccMap = L.map(mapDiv)
         ccMap.addEventListener('load', (evt) => {
-            let spinnerDiv = document.createElement('div')
-            spinnerDiv.className = "spinner"
-            mapDiv.append(spinnerDiv)
+            spinner = document.getElementById("spinner")
+            spinner.zIndex = 1000
         })
         ccMap.setView([0, 0], 2)
         let attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -186,10 +191,10 @@ class ConfirmedCasesMap {
             }
         }
 
-        this.flyTo('Global')
+        spinner = document.getElementById("spinner")
+        spinner.zIndex = -1000
 
-        let spinnerDiv = this.mapDiv.getElementsByClassName('spinner')
-        // this.mapDiv.remove(spinnerDiv)
+        this.flyTo('Global')
     }
 
     flyTo = async (country) => {
