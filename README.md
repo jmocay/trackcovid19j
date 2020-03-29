@@ -10,8 +10,8 @@ Datasource: https://github.com/CSSEGISandData/COVID-19
 
 REST API endpoints:
 
-http://trackcovid19j.herokuapp.com/all_cases - latest confirmed cases, deaths, recovered for all countries.(space)
-http://trackcovid19j.herokuapp.com/all_countries - list of all countries.(space)
+http://trackcovid19j.herokuapp.com/all_cases - latest confirmed cases, deaths, recovered for all countries.
+http://trackcovid19j.herokuapp.com/all_countries - list of all countries.
 
 http://trackcovid19j.herokuapp.com/cases_bycountry/<country> - latest confirmed cases, deaths, recovered specific to a country.
 
