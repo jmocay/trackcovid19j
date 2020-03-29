@@ -5,7 +5,7 @@ Website URL: http://trackcovid19j.herokuapp.com/
 
 Datasource: https://github.com/CSSEGISandData/COVID-19
 
-REST API endpoints:
+## REST API endpoints:
 
 http://trackcovid19j.herokuapp.com/all_cases - latest confirmed cases, deaths, recovered for all countries.
 http://trackcovid19j.herokuapp.com/all_countries - list of all countries.
