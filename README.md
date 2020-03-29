@@ -1,5 +1,5 @@
 # COVID-19 Dashboard
-A single page app to help track Novel Corona Virus global spread.
+A single page application to help track Novel Corona Virus global spread.
 
 Website URL: http://trackcovid19j.herokuapp.com/
 
