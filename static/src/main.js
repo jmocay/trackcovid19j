@@ -244,7 +244,7 @@ class ConfirmedCasesMap {
         })
 
         let spinner = this.getSpinner()
-        spinner.zIndex = 1000
+        spinner.zIndex = -1000
 
         this.flyTo('Global')
     }
@@ -326,7 +326,7 @@ class CasesChart {
         });
     }
 
-    show = async (chartData, country) => {
+    show = (chartData, country) => {
         this.chart.options.title.text = country
         this.chart.data = {
             labels: chartData.date,
@@ -408,7 +408,7 @@ class CasesByCountry {
         updateSummaryStats(country)
     }
 
-    show = async (casesData) => {
+    show = (casesData) => {
         let cases = [
             {
                 idSummary: 'confirmed-cases-summary',

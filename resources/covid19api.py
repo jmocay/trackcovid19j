@@ -1,17 +1,15 @@
 import pandas as pd
-from datetime import datetime
-from flask_restful import Resource, request
-import json
+from flask_restful import Resource
 
 class ConfirmedCasesMap(Resource):
     def get(self):
         df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Combined_Key', 'Lat', 'Long_'])['Confirmed'].sum())
-        df = df[ df['Confirmed'] > 0 ]
+        cases = df[ df['Confirmed'] > 0 ]
         return {
-            "location": [str(idx[0]) for idx in df.index],
-            "lat": [float(idx[1]) for idx in df.index],
-            "lon": [float(idx[2]) for idx in df.index],
-            "count": [int(cnt) for cnt in df['Confirmed']],
+            "location": [str(idx[0]) for idx in cases.index],
+            "lat": [float(idx[1]) for idx in cases.index],
+            "lon": [float(idx[2]) for idx in cases.index],
+            "count": [int(cnt) for cnt in cases['Confirmed']],
         }
 
 class GlobalCasesTimeSeries(Resource):
@@ -25,17 +23,17 @@ class GlobalCasesTimeSeries(Resource):
         stats = {}
         for i in range(len(categories)):
             if country == 'Global':
-                df = pd.DataFrame([
+                cases = pd.DataFrame([
                         pd.read_csv(csv_files[i])
                             .drop(['Province/State', 'Country/Region', 'Lat', 'Long'], axis=1)
                             .sum(axis=0)]).T
             else:
                 df = pd.read_csv(csv_files[i])
-                df = pd.DataFrame(df[ df['Country/Region'] == country ]
+                cases = pd.DataFrame(df[ df['Country/Region'] == country ]
                               .drop(['Province/State', 'Country/Region', 'Lat', 'Long'], axis=1)
                               .sum(axis=0))
-            stats['{0}_count'.format(categories[i])] = [int(cnt) for cnt in df[df.columns[0]]]
-        stats['date'] = [str(dt) for dt in df.index]
+            stats['{0}_count'.format(categories[i])] = [int(cnt) for cnt in cases[cases.columns[0]]]
+        stats['date'] = [str(date) for date in cases.index]
         return stats
 
 class AllCases(Resource):
@@ -45,28 +43,26 @@ class AllCases(Resource):
         columns = ['Confirmed', 'Deaths', 'Recovered', 'Active']
         df = pd.read_csv('data/daily_report.csv')
         for i in range(len(categories)):
-            df2 = df.loc[:, ['Country_Region', columns[i]]].groupby('Country_Region').sum().sort_values(columns[i], ascending=False)
-            stats["countries_{0}".format(categories[i])] = [str(country) for country in df2.index]
-            stats["{0}".format(categories[i])] = [int(count) for count in df2[columns[i]]]
-            stats["total_{0}".format(categories[i])] = int(df2[columns[i]].sum())
+            cases = df.loc[:, ['Country_Region', columns[i]]].groupby('Country_Region').sum().sort_values(columns[i], ascending=False)
+            stats["countries_{0}".format(categories[i])] = [str(country) for country in cases.index]
+            stats["{0}".format(categories[i])] = [int(count) for count in cases[columns[i]]]
+            stats["total_{0}".format(categories[i])] = int(cases[columns[i]].sum())
         return stats
 
 class CasesByCountry(Resource):
     def get(self, country):
-        stats = {}
         columns = ['Confirmed', 'Deaths', 'Recovered', 'Active']
         df = pd.read_csv('data/daily_report.csv')
         if country == 'Global':
-            ser = df.loc[:, columns ].sum()
+            cases = df.loc[:, columns ].sum()
         else:
-            ser = df[ df['Country_Region'] == country ].loc[:, columns ].sum()
-        stats = {
-            "confirmed": int(ser['Confirmed']),
-            "deaths": int(ser['Deaths']),
-            "recovered": int(ser['Recovered']),
-            "active": int(ser['Active']),
+            cases = df[ df['Country_Region'] == country ].loc[:, columns ].sum()
+        return {
+            "confirmed": int(cases['Confirmed']),
+            "deaths": int(cases['Deaths']),
+            "recovered": int(cases['Recovered']),
+            "active": int(cases['Active']),
         }
-        return stats
 
 class CountryLatLon(Resource):
     def get(self, country):
