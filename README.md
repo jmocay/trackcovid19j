@@ -15,10 +15,14 @@ http://trackcovid19j.herokuapp.com/all_cases - latest confirmed cases, deaths, r
 http://trackcovid19j.herokuapp.com/all_countries - list of all countries.
 
 http://trackcovid19j.herokuapp.com/cases_bycountry/<country> - latest confirmed cases, deaths, recovered specific to a country.
+
+Example: http://trackcovid19j.herokuapp.com/cases_bycountry/China
   
 http://trackcovid19j.herokuapp.com/global_confirmed_cases - latest confirmed cases for all countries with latitude and longitude.
 
 http://trackcovid19j.herokuapp.com//country_latlon/<country> - country latitude and longitude.
+  
+Example: http://trackcovid19j.herokuapp.com//country_latlon/US
   
 http://trackcovid19j.herokuapp.com//global_cases_timeseries/<country> - confirmed cases, deaths, recovered timeseries data by country.
 
