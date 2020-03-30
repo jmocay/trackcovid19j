@@ -12,6 +12,7 @@ from resources.covid19api import (
     CountryLatLon,
     GlobalCasesTimeSeries,
 )
+from resources.news import Headlines
 
 app = Flask(__name__)
 api = Api(app)
@@ -22,10 +23,19 @@ api.add_resource(CasesByCountry, "/cases_bycountry/<country>")
 api.add_resource(ConfirmedCasesMap, "/global_confirmed_cases")
 api.add_resource(CountryLatLon, "/country_latlon/<country>")
 api.add_resource(GlobalCasesTimeSeries, "/global_cases_timeseries/<country>")
+api.add_resource(Headlines, "/get_headlines/<topic>")
 
 @app.route('/')
 def index():
     return render_template("index.html")
+
+@app.route('/new')
+def index_new():
+    return render_template("index_new.html")
+
+@app.route('/news')
+def news_grid():
+    return render_template("covid19_news.html")
 
 if __name__ == '__main__':
     app.run(debug=False)

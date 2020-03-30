@@ -1,16 +1,9 @@
-var sideBar;
+var sideBar
+var navBar
 var confirmedCasesMap
 var casesChart
-var casesByCountry
-
-appConfig = {
-    env: 'PROD',
-    serverUrl: {
-        DEV: 'http://localhost:5000/',
-        PROD: 'http://trackcovid19j.herokuapp.com/',
-    },
-    urlPrefix: '',
-}
+var casesSummary
+var casesDetails
 
 window.onload = async () => {
     appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
@@ -18,52 +11,34 @@ window.onload = async () => {
     sideBar = new Sidebar(appConfig)
     sideBar.initialize()
 
+    navBar = new NavBar(appConfig)
+    navBar.initialize()
+
     confirmedCasesMap = new ConfirmedCasesMap(appConfig)
     confirmedCasesMap.initialize()
 
     casesChart = new CasesChart(appConfig)
     casesChart.initialize()
 
-    casesByCountry = new CasesByCountry(appConfig)
-    casesByCountry.initialize()
+    casesSummary = new CasesSummary(appConfig)
+    casesSummary.initialize()
 
+    casesDetails = new CasesByCountry(appConfig)
+    casesDetails.initialize()
 }
 
-const getCasesByCountry = async (country) => {
-    try {
-        let url = `${appConfig.urlPrefix}/cases_bycountry/${country}`
-        let res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        let byCountryData = await res.json()
-        return byCountryData;
+class NavBar {
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
     }
-    catch (err) {
-        console.log(err)
-    }
-}
 
-const updateSummaryStats = async (country) => {
-    let categories = ['confirmed', 'deaths', 'recovered', 'active']
-    try {
-        let byCountryData = await getCasesByCountry(country)
-        categories.forEach((category) => {
-            let a = document.getElementById(`${category}-summary`)
-            if (a) {
-                if (byCountryData[category] > 0) {
-                    a.textContent = `${byCountryData[category]}`                    
-                }
-                else {
-                    a.textContent = "0 or na"
-                }
-            }
-        })
-    }
-    catch (err) {
-        console.log(err)
+    initialize = () => {
+        let navCountry = document.getElementById("navbar-country")
+        navCountry.onclick = sideBar.toggleSidebar.bind(sideBar)
+        let navNews = document.getElementById("navbar-news")
+        if (navNews) {
+            navNews.href = `${this.urlPrefix}/news`
+        }
     }
 }
 
@@ -76,8 +51,6 @@ class Sidebar {
 
     initialize  = async () => {
         let sidebarData = await sideBar.getSidebarData()
-        let navbar = document.getElementById("navbar-country")
-        navbar.onclick = this.toggleSidebar.bind(this)
         this.show(sidebarData)
     }
 
@@ -121,7 +94,7 @@ class Sidebar {
     sidebarClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
-        updateSummaryStats(country)
+        casesSummary.update(country)
         this.closeSidebar()
     }
 
@@ -219,7 +192,7 @@ class ConfirmedCasesMap {
 
     show = (mapData) => {
         let ncov19Icon = L.icon({
-            iconUrl: './static/images/corona-red.ico',
+            iconUrl: 'static/images/corona-red.ico',
             iconSize: [32, 32],
             iconAnchor: [16, 16],
             popupAnchor: [-5, -5],
@@ -375,6 +348,52 @@ class CasesChart {
     }
 }
 
+class CasesSummary {
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
+    }
+
+    initialize = async () => {
+    }
+
+    update = async (country) => {
+        let summaryData = await this.getData(country)
+        this.show(summaryData)
+    }
+
+    getData = async (country) => {
+        try {
+            let url = `${this.urlPrefix}/cases_bycountry/${country}`
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let byCountryData = await res.json()
+            return byCountryData;
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    show = (summaryData) => {
+        let categories = ['confirmed', 'deaths', 'recovered', 'active']
+        categories.forEach((summaryData) => {
+            let a = document.getElementById(`${category}-summary`)
+            if (a) {
+                if (byCountryData[category] > 0) {
+                    a.textContent = `${byCountryData[category]}`
+                }
+                else {
+                    a.textContent = "0 or na"
+                }
+            }
+        })
+    }
+}
+
 class CasesByCountry {
 
     constructor(cfg) {
@@ -382,11 +401,11 @@ class CasesByCountry {
     }
 
     initialize = async () => {
-        let casesData = await this.getCasesByCountryData()
+        let casesData = await this.getData()
         this.show(casesData)
     }
 
-    getCasesByCountryData = async () => {
+    getData = async () => {
         try {
             let res = await fetch(`${this.urlPrefix}/all_cases`, {
                 method: 'GET',
@@ -405,7 +424,7 @@ class CasesByCountry {
     casesByCountryClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
-        updateSummaryStats(country)
+        casesSummary.update(country)
     }
 
     show = (casesData) => {

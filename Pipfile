@@ -10,6 +10,7 @@ flask = "*"
 pandas = "*"
 gunicorn = "*"
 flask-restful = "*"
+newsapi-python = "*"
 
 [requires]
 python_version = "3.8"
