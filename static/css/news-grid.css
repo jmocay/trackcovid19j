@@ -43,17 +43,6 @@
   margin-top: calc(40px + 1.5rem);
 }
 
-.spinner {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  top: 50%;
-  left: 50%;
-  margin-left: -50px;
-  margin-top: -50px;
-  background-size: 100%;
-}
-
 /* Medium screens */
 @media screen and (min-width: 600px) {
   .card-tall {
@@ -65,4 +54,15 @@
     grid-column: span 2 / auto;
     font-size: 2rem;
   }
+}
+
+.spinner {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
+  background-size: 100%;
 }

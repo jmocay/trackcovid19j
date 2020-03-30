@@ -303,11 +303,19 @@ footer a {
 }
 
 .spinner {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+
+    width: 120px;
+    height: 120px;
+    margin-left: -50px;
+    margin-top: -30px;
+    background-size: 100%;
+
     border: 16px solid #f3f3f3;
     border-radius: 50%;
     border-top: 16px solid rgb(238, 91, 22);
-    width: 120px;
-    height: 120px;
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
 }

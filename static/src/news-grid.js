@@ -1,5 +1,5 @@
-var news;
 var navBar
+var newsGrid
 
 window.onload = async () => {
     appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
@@ -7,8 +7,8 @@ window.onload = async () => {
     navBar = new NavBar(appConfig)
     navBar.initialize()
 
-    news = new NewsGrid(appConfig)
-    news.initialize()
+    newsGrid = new NewsGrid(appConfig)
+    newsGrid.initialize()
 }
 
 class NavBar {
@@ -43,11 +43,11 @@ class NewsGrid {
         document.body.appendChild(spinner)
     }
 
-    getData= async ()=> {
+    getData = async () => {
         try {
             let topic = "Corona Virus"
-            let url = `${this.urlPrefix}/${topic}`
-            let result = await fetch(encodeURI(url), {
+            let url = encodeURI(`${this.urlPrefix}/${topic}`)
+            let result = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
