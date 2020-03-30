@@ -66,14 +66,23 @@ class CasesByCountry(Resource):
 
 class CountryLatLon(Resource):
     def get(self, country):
-        df = pd.read_csv('data/daily_report.csv')
-        df = df[ df['Country_Region'] == country ]
-        df = pd.DataFrame(df.groupby(['Country_Region'])[ ['Lat', 'Long_'] ].mean())
-        return {
-            "country": str(country),
-            "lat": float(df['Lat']),
-            "lon": float(df['Long_']),
-        }
+        df = pd.read_csv('data/countries.csv')
+        df = df[ df['country'] == country ]
+        if df.shape[0] > 0:
+            return {
+                "country": country,
+                "lat": float(df['lat']),
+                "lon": float(df['lon']),
+            }
+        else:
+            df = pd.read_csv('data/daily_report.csv')
+            df = df[ df['Country_Region'] == country ]
+            df = pd.DataFrame(df.groupby(['Country_Region'])[ ['Lat', 'Long_'] ].mean())
+            return {
+                "country": str(country),
+                "lat": float(df['Lat']),
+                "lon": float(df['Long_']),
+            }
 
 class AllCountries(Resource):
     def get(self):
