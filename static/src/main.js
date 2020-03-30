@@ -1,16 +1,9 @@
-var sideBar;
+var sideBar
+var navBar
 var confirmedCasesMap
 var casesChart
-var casesByCountry
-
-appConfig = {
-    env: 'PROD',
-    serverUrl: {
-        DEV: 'http://localhost:5000/',
-        PROD: 'http://trackcovid19j.herokuapp.com/',
-    },
-    urlPrefix: '',
-}
+var casesSummary
+var casesDetails
 
 window.onload = async () => {
     appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
@@ -18,52 +11,34 @@ window.onload = async () => {
     sideBar = new Sidebar(appConfig)
     sideBar.initialize()
 
-    confirmedCasesMap = new ConfirmedCasesMap(appConfig)
-    confirmedCasesMap.initialize()
+    navBar = new NavBar(appConfig)
+    navBar.initialize()
+
+    casesSummary = new CasesSummary(appConfig)
+    casesSummary.initialize()
+
+    casesDetails = new CasesByCountry(appConfig)
+    casesDetails.initialize()
 
     casesChart = new CasesChart(appConfig)
     casesChart.initialize()
 
-    casesByCountry = new CasesByCountry(appConfig)
-    casesByCountry.initialize()
-
+    confirmedCasesMap = new ConfirmedCasesMap(appConfig)
+    confirmedCasesMap.initialize()
 }
 
-const getCasesByCountry = async (country) => {
-    try {
-        let url = `${appConfig.urlPrefix}/cases_bycountry/${country}`
-        let res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        let byCountryData = await res.json()
-        return byCountryData;
+class NavBar {
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
     }
-    catch (err) {
-        console.log(err)
-    }
-}
 
-const updateSummaryStats = async (country) => {
-    let categories = ['confirmed', 'deaths', 'recovered', 'active']
-    try {
-        let byCountryData = await getCasesByCountry(country)
-        categories.forEach((category) => {
-            let a = document.getElementById(`${category}-summary`)
-            if (a) {
-                if (byCountryData[category] > 0) {
-                    a.textContent = `${byCountryData[category]}`                    
-                }
-                else {
-                    a.textContent = "0 or na"
-                }
-            }
-        })
-    }
-    catch (err) {
-        console.log(err)
+    initialize = () => {
+        let navCountry = document.getElementById("navbar-country")
+        navCountry.onclick = sideBar.toggleSidebar.bind(sideBar)
+        let navNews = document.getElementById("navbar-news")
+        if (navNews) {
+            navNews.href = `${this.urlPrefix}/news`
+        }
     }
 }
 
@@ -76,14 +51,12 @@ class Sidebar {
 
     initialize  = async () => {
         let sidebarData = await sideBar.getSidebarData()
-        let navbar = document.getElementById("navbar-country")
-        navbar.onclick = this.toggleSidebar.bind(this)
         this.show(sidebarData)
     }
 
     getSidebarData = async (country) => {
         try {
-            let url = `${this.urlPrefix}/all_countries`
+            let url = encodeURI(`${this.urlPrefix}/all_countries`)
             let res = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -121,7 +94,7 @@ class Sidebar {
     sidebarClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
-        updateSummaryStats(country)
+        casesSummary.update(country)
         this.closeSidebar()
     }
 
@@ -152,15 +125,14 @@ class ConfirmedCasesMap {
         this.urlPrefix = cfg.urlPrefix
     }
 
-    getSpinner = () => {        
-        let spinner = document.getElementById("spinner")
-        if (spinner === null) {
-            spinner = document.createElement('div')
-            spinner.id = "spinner"
+    getSpinner = () => {
+        if (!this.spinner) {
+            let spinner = document.createElement('div')
             spinner.className = "spinner"
-            document.getElementById("map-div").append(spinner)
+            document.body.appendChild(spinner)
+            this.spinner = spinner
         }
-        return spinner
+        return this.spinner
     }
 
     initialize = async () => {
@@ -186,7 +158,8 @@ class ConfirmedCasesMap {
 
     getMapData = async () => {
         try {
-            let res = await fetch(`${this.urlPrefix}/global_confirmed_cases`, {
+            let url = encodeURI(`${this.urlPrefix}/global_confirmed_cases`)
+            let res = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -202,7 +175,7 @@ class ConfirmedCasesMap {
 
     getCountryLatLong = async (country) => {
         try {
-            let url = `${this.urlPrefix}/country_latlon/${country}`
+            let url = encodeURI(`${this.urlPrefix}/country_latlon/${country}`)
             let res = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -219,7 +192,7 @@ class ConfirmedCasesMap {
 
     show = (mapData) => {
         let ncov19Icon = L.icon({
-            iconUrl: './static/images/corona-red.ico',
+            iconUrl: 'static/images/corona-red.ico',
             iconSize: [32, 32],
             iconAnchor: [16, 16],
             popupAnchor: [-5, -5],
@@ -264,10 +237,10 @@ class CasesChart {
 
     constructor(cfg) {
         this.urlPrefix = cfg.urlPrefix
-        this.chart = this.create();
     }
 
     initialize = async () => {
+        this.setupChart();
         let country = 'Global'
         let chartData = await this.getData(country)
         this.show(chartData, country)
@@ -278,8 +251,8 @@ class CasesChart {
         this.show(chartData, country)
     }
 
-    create = () => {
-        return new Chart(document.getElementById('line-chart').getContext('2d'), {
+    setupChart = () => {
+        this.chart = new Chart(document.getElementById('line-chart').getContext('2d'), {
             type: 'line',
             data: {},
             options: {
@@ -357,7 +330,7 @@ class CasesChart {
 
     getData = async (country) => {
         try {
-            let url = `${this.urlPrefix}/global_cases_timeseries/${country}`
+            let url = encodeURI(`${this.urlPrefix}/global_cases_timeseries/${country}`)
             let res = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -365,13 +338,56 @@ class CasesChart {
                 },
             })
             let chartData = await res.json()
-            let dates = chartData.date.map((val) => new Date(val))
-            chartData.date = dates
+            chartData.date = chartData.date.map((dateStr) => new Date(dateStr))
             return chartData;
         }
         catch (err) {
             console.log(err)
         }
+    }
+}
+
+class CasesSummary {
+
+    constructor(cfg) {
+        this.urlPrefix = cfg.urlPrefix
+    }
+
+    initialize = async () => {}
+
+    update = async (country) => {
+        let summaryData = await this.getData(country)
+        this.show(summaryData)
+    }
+
+    getData = async (country) => {
+        try {
+            let url = encodeURI(`${this.urlPrefix}/cases_bycountry/${country}`)
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let byCountryData = await res.json()
+            return byCountryData;
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    show = (summaryData) => {
+        let categories = [ 'confirmed', 'deaths', 'recovered', 'active' ]
+        categories.forEach((category) => {
+            let a = document.getElementById(`${category}-summary`)
+            if (summaryData[category] > 0) {
+                a.textContent = `${summaryData[category]}`
+            }
+            else {
+                a.textContent = "0 or na"
+            }
+        })
     }
 }
 
@@ -382,13 +398,14 @@ class CasesByCountry {
     }
 
     initialize = async () => {
-        let casesData = await this.getCasesByCountryData()
+        let casesData = await this.getData()
         this.show(casesData)
     }
 
-    getCasesByCountryData = async () => {
+    getData = async () => {
         try {
-            let res = await fetch(`${this.urlPrefix}/all_cases`, {
+            let url = encodeURI(`${this.urlPrefix}/all_cases`)
+            let res = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -405,7 +422,7 @@ class CasesByCountry {
     casesByCountryClickedHandler = (country, evt) => {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
-        updateSummaryStats(country)
+        casesSummary.update(country)
     }
 
     show = (casesData) => {

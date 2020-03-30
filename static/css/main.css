@@ -4,7 +4,7 @@ body {
     background: white;
 }
 
-.flex-container {
+.heading {
     position: fixed;
     top: 0;
     display: flex;
@@ -27,6 +27,7 @@ body {
     text-align: center;
     vertical-align: text-top;
     flex-grow: 1;
+    overflow: hidden;
 }
 
 .header b {
@@ -44,7 +45,7 @@ body {
 .header,
 .navbar {
     height: 40px;
-    background: rgb(8, 94, 94);;
+    background: rgb(8, 94, 94);
 }
 
 .navbar a {
@@ -303,11 +304,19 @@ footer a {
 }
 
 .spinner {
+    position: absolute;
+    top: 30%;
+    left: 20%;
+
+    width: 120px;
+    height: 120px;
+    margin-left: -50px;
+    margin-top: -30px;
+    background-size: 100%;
+
     border: 16px solid #f3f3f3;
     border-radius: 50%;
     border-top: 16px solid rgb(238, 91, 22);
-    width: 120px;
-    height: 120px;
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
 }
