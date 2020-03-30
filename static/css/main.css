@@ -4,7 +4,7 @@ body {
     background: white;
 }
 
-.flex-container {
+.heading {
     position: fixed;
     top: 0;
     display: flex;
@@ -27,6 +27,7 @@ body {
     text-align: center;
     vertical-align: text-top;
     flex-grow: 1;
+    overflow: hidden;
 }
 
 .header b {
