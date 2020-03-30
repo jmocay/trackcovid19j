@@ -206,6 +206,13 @@ body {
     flex-direction: column;
 }
 
+.confirmed-summary:hover,
+.deaths-summary:hover,
+.recovered-summary:hover,
+.active-summary:hover {
+    transform: translateY(-3px) scale(1.1);
+}
+
 .confirmed-details,
 .deaths-details,
 .recovered-details,
@@ -223,6 +230,24 @@ body {
     margin-left: 10px;
     color: white;
     text-decoration: none;
+}
+
+.confirmed-details a:hover {
+    background: rgb(226, 61, 1);
+    border-radius: 5px;
+}
+
+.deaths-details a:hover {
+    background: rgb(212, 1, 1);
+    border-radius: 5px;
+}
+.recovered-details a:hover {
+    background: rgb(1, 102, 1);
+    border-radius: 5px;
+}
+.active-details a:hover {
+    background: rgb(2, 2, 211);
+    border-radius: 5px;
 }
 
 .cases-by-country-header {
