@@ -4,3 +4,5 @@ __py_cache__
 *.ipynb
 *.pyc
 newsapikey.txt
+*_US.csv
+
