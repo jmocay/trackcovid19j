@@ -62,32 +62,69 @@ class NewsGrid {
     }
 
     show = (newsData) => {
-        const createNewsTile = (article, i) => {
-            let className = "card"
+        const maxText = {
+            "news__card": {
+                title: 40,
+                description: 80,
+            },
+            "news__card news__card_wide": {
+                title: 60,
+                description: 100,
+            },
+            "news__card news__card_tall news__card_wide": {
+                title: 80,
+                description: 320,
+            },
+        }
+
+        const truncateText = (text, n) => {
+            return (text <= n) ? text : text.slice(0, n) + "..."
+        }
+
+        const createNewsCard = (article, i) => {
+            let className = "news__card"
             if (i%8 == 0) {
-                className = "card card-tall card-wide"
+                className = "news__card news__card_tall news__card_wide"
             }
             else if (i%3 == 0) {
-                className = "card card-wide"
+                className = "news__card news__card_wide"
             }
 
-            let newsTile = document.createElement('div')
-            newsTile.className = className
-            newsTile.style.backgroundImage = `url(${article['urlToImage']})`
+            let newsCard = document.createElement('div')
+            newsCard.className = className
 
-            let a = document.createElement('a')
-            a.href = article['url']
-            a.textContent = article['title']
-            newsTile.append(a)
+            let newsImg = document.createElement('img')
+            newsImg.src = article['urlToImage']
 
-            return newsTile
+            let newsDetails = document.createElement('div')
+            newsDetails.className = "news__details"
+
+            let newsTitle = document.createElement('h2')
+            newsTitle.textContent = truncateText(
+                article['title'], maxText[className].title
+            )
+            let newsDescription = document.createElement('p')
+            let anchor = document.createElement('a')
+            anchor.href = article['url']
+            anchor.textContent = truncateText(
+                article['description'], maxText[className].description
+            )
+            newsDescription.append(anchor)
+
+            newsDetails.append(newsTitle)
+            newsDetails.append(newsDescription)
+
+            newsCard.append(newsImg)
+            newsCard.append(newsDetails)
+
+            return newsCard
         }
 
         let root = document.getElementById("news-articles")
         if (newsData.status === 'ok') {
             let articles = newsData.articles;
             articles.forEach((article, i) => {
-                root.append(createNewsTile(article, i))
+                root.append(createNewsCard(article, i))
             })
             document.body.removeChild(this.spinner)
         }
