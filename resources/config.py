@@ -1,4 +1,4 @@
 class AppConfig(object):
-    # Your site specific newsapi key
-    ENV = 'PROD',
-    NEWSAPI_KEY = ''
+    ENV = 'PROD'
+    NEWSFILE_REFRESH_TIME = 4 # hours
+    NEWSAPI_KEY = '' # Site specific newsapi key

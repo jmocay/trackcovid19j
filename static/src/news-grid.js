@@ -46,7 +46,7 @@ class NewsGrid {
     getData = async () => {
         try {
             let topic = "Corona Virus"
-            let url = encodeURI(`${this.urlPrefix}get_headlines/${topic}`)
+            let url = encodeURI(`${this.urlPrefix}/get_headlines/${topic}`)
             let result = await fetch(url, {
                 method: 'GET',
                 headers: {
