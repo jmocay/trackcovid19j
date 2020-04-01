@@ -1,4 +1,9 @@
-.top-nav {
+body {
+  background-image: linear-gradient(-90deg, yellow, rgb(8, 94, 94));
+  font-family: sans-serif;
+}
+
+.top__nav {
   background: rgb(8, 94, 94);
   margin: 0;
   position: fixed;
@@ -10,16 +15,15 @@
   height: 40px;
 }
 
-.top-nav h1 {
+.top__nav h1 {
   font-size: 2rem;
   font-weight: bold;
   align-self: center;
   text-align: left;
   flex-grow: 1;
-  margin-left: 10px;
 }
 
-.top-nav a {
+.top__nav a {
   float: right;
   text-decoration: none;
   display: block;
@@ -30,30 +34,61 @@
   flex-grow: none;
 }
 
-.top-nav a:hover {
+.top__nav a:hover {
   background: #ddd;
   color: black;
 }
-
-.news-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  grid-auto-rows: 240px;
-  margin-top: calc(40px + 1.5rem);
+       
+.news__grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-auto-rows: 240px;
+    grid-auto-flow: dense;
+    margin-top: calc(40px + 1.5rem);
 }
 
-/* Medium screens */
-@media screen and (min-width: 600px) {
-  .card-tall {
-    grid-row: span 2 / auto;
-    font-size: 2rem;
-  }
+.news__card {
+    display: grid;
+    background: rgba(255, 255, 255, .8);
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+    grid-template-columns: 200px 1fr;
+    padding: 20px;
+    gap: 10px;
+    align-items: center;
+    overflow: hidden;
+}
 
-  .card-wide {
-    grid-column: span 2 / auto;
-    font-size: 2rem;
-  }
+.news__card img {
+    width: 100%;
+    height: 100%;
+}
+
+.news__card:hover {
+    transform: translateY(-3px) scale(1.1);
+}
+
+.news__details h2 {
+    font-size: 1.6rem;
+    font-weight: bolder;
+}
+
+.news__details a {
+    text-decoration: none;
+    color: black;
+    font-size: 1rem;
+}
+
+@media screen and (min-width: 600px) {
+    .news__card_tall {
+        grid-template-columns: 480px 1fr;
+        grid-row: span 2 / auto;
+    }
+
+    .news__card_wide {
+        grid-template-columns: 480px 1fr;
+        grid-column: span 2 / auto;
+    }
 }
 
 .spinner {
