@@ -6,19 +6,24 @@ class Headlines(Resource):
     def get(self, topic):
         result = { 'status': 'ok', 'articles': [] }
         news_client = NewsApiClient(api_key=cfg.NEWSAPI_KEY)
-        news_sources = [
-            'abc-news',
-            'cbs-news',
-            'cnn',
-            'cnbc',
-            'msnbc',
-            'nbc-news',
-            'google-news',
-            'bbc-news',
-            'time',
-            'usa-today',
-            'xinhua-net'
-        ]
+        if cfg.ENV == 'DEV':
+            news_sources = [
+                'abc-news',
+                'cbs-news',
+                'cnn',
+                'cnbc',
+                'msnbc',
+                'nbc-news',
+                'google-news',
+                'bbc-news',
+                'time',
+                'usa-today',
+                'xinhua-net'
+            ]
+        else: # limit news sources
+            news_sources = [
+                'cnn',
+            ]
 
         for news_source in news_sources:
             response = news_client.get_top_headlines(q=topic, sources=news_source)

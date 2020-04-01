@@ -37,7 +37,7 @@ class NavBar {
         navCountry.onclick = sideBar.toggleSidebar.bind(sideBar)
         let navNews = document.getElementById("navbar-news")
         if (navNews) {
-            navNews.href = `${this.urlPrefix}/news`
+            navNews.href = encodeURI(`${this.urlPrefix}/headlines`)
         }
     }
 }
