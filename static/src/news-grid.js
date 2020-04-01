@@ -18,7 +18,7 @@ class NavBar {
 
     initialize = () => {
         let navCovid19 = document.getElementById('nav-covid19')
-        navCovid19.href = `${this.urlPrefix}/new`
+        navCovid19.href = encodeURI(`${this.urlPrefix}/news`)
     }
 }
 
@@ -46,7 +46,7 @@ class NewsGrid {
     getData = async () => {
         try {
             let topic = "Corona Virus"
-            let url = encodeURI(`${this.urlPrefix}/${topic}`)
+            let url = encodeURI(`${this.urlPrefix}get_headlines/${topic}`)
             let result = await fetch(url, {
                 method: 'GET',
                 headers: {
