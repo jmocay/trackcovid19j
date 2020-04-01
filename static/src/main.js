@@ -423,6 +423,7 @@ class CasesByCountry {
         confirmedCasesMap.flyTo(country)
         casesChart.update(country)
         casesSummary.update(country)
+        window.scrollTo(0, 0)
     }
 
     show = (casesData) => {
