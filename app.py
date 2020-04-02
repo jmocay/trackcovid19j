@@ -29,10 +29,6 @@ api.add_resource(Headlines, "/get_headlines/<topic>")
 def index():
     return render_template("index.html")
 
-@app.route('/news')
-def index_new():
-    return render_template("index_new.html")
-
 @app.route('/headlines')
 def news_grid():
     return render_template("covid19_news.html")

@@ -2,79 +2,84 @@
 
 <html>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-        <title>COVID-19 Tracker</title>
+    <title>COVID-19 Tracker</title>
 
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-            integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-            crossorigin="" />
-        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-            crossorigin="">
-            </script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin="">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="static/css/main.css" />
+    <style>
+        @import url('static/css/main.css');
+    </style>
 
-    </head>
+</head>
 
-    <body>
+<body>
 
-        <div class="heading">
-            <div class="logo">
-                <img src="static/images/logo.ico" alt="COVID-19 Tracker Logo" title="Author: Joel Ocay, Email: jmocay72@gmail.com">
-            </div>
+    <div class="heading">
+        <div class="logo">
+            <img src="static/images/logo.ico" alt="COVID-19 Tracker Logo"
+                title="Author: Joel Ocay, Email: jmocay72@gmail.com">
+        </div>
 
-            <div class="header">
-                <b>COVID-19 Tracker</b>
-            </div>
+        <div class="header">
+            <b>COVID-19 Tracker</b>
+        </div>
 
-            <div class="navbar">
-                <a id="navbar-country" href="javascript:void(0)">&#9776; Country</a>
+        <div class="navbar">
+            <a id="navbar-country" href="javascript:void(0)">&#9776; Country</a>
+            <a id="navbar-news">&#9783; News</a>
+        </div>
+    </div>
+
+    <div id="sidebar" class="sidenav">
+        <div>
+            <a id="sidebar-closebtn" href="javascript:void(0)" class="closebtn">&times;</a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="map-container">
+            <div id="map-div" class="map">
             </div>
         </div>
 
-        <div id="sidebar" class="sidenav">
-            <div>
-                <a id= "sidebar-closebtn" href="javascript:void(0)" class="closebtn">&times;</a>
+        <div class="chart-container">
+            <div class="line-chart">
+                <canvas id="line-chart" class="line-chart-canvas"></canvas>
             </div>
         </div>
 
-        <div class="main">
-            <div class="map-container">
-                <div id="map-div" class="map">
-                </div>
-            </div>
+        <div id="confirmed-cases-summary" class="confirmed-summary"></div>
+        <div id="confirmed-cases-details" class="confirmed-details"></div>
 
-            <div class="chart-container">
-                <div class="line-chart">
-                    <canvas id="line-chart" class="line-chart-canvas"></canvas>
-                </div>
-            </div>
-            
-            <div id="confirmed-cases-summary" class="confirmed-summary"></div>
-            <div id="confirmed-cases-details" class="confirmed-details"></div>
-            
-            <div id="deaths-cases-summary" class="deaths-summary"></div>
-            <div id="deaths-cases-details" class="deaths-details"></div>
-            
-            <div id="recovered-cases-summary" class="recovered-summary"></div>
-            <div id="recovered-cases-details" class="recovered-details"></div>
-        
-            <div id="active-cases-summary" class="active-summary"></div>
-            <div id="active-cases-details" class="active-details"></div>
-            
-            <footer>
-                <p>Data Source: <a href="https://github.com/CSSEGISandData/COVID-19">2019 Novel Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</a></p>
-            </footer>
-        </div>
+        <div id="deaths-cases-summary" class="deaths-summary"></div>
+        <div id="deaths-cases-details" class="deaths-details"></div>
 
-        <script src="static/src/config.js"></script>
-        <script src="static/src/main.js"></script>
-    </body>
+        <div id="recovered-cases-summary" class="recovered-summary"></div>
+        <div id="recovered-cases-details" class="recovered-details"></div>
+
+        <div id="active-cases-summary" class="active-summary"></div>
+        <div id="active-cases-details" class="active-details"></div>
+
+        <footer>
+            <p>Data Source: <a href="https://github.com/CSSEGISandData/COVID-19">2019 Novel Coronavirus COVID-19
+                    (2019-nCoV) Data Repository by Johns Hopkins CSSE</a></p>
+        </footer>
+    </div>
+
+    <script src="static/src/config.js"></script>
+    <script src="static/src/main.js"></script>
+</body>
 
 </html>

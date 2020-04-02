@@ -18,7 +18,7 @@ class NavBar {
 
     initialize = () => {
         let navCovid19 = document.getElementById('nav-covid19')
-        navCovid19.href = encodeURI(`${this.urlPrefix}/news`)
+        navCovid19.href = encodeURI(`${this.urlPrefix}/`)
     }
 }
 
