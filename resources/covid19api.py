@@ -91,3 +91,5 @@ class AllCountries(Resource):
         return {
             "countries": [ str(country) for country in df.index ],
         }
+
+
