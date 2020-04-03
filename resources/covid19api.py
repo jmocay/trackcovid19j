@@ -97,7 +97,7 @@ class USConfirmed(Resource):
         df = pd.read_csv('data/daily_report.csv')
         df = df[ df['Country_Region'] == 'US'].drop(['FIPS','Admin2','Country_Region','Last_Update','Lat','Long_','Combined_Key'], axis=1)
         df = df[ df['Province_State'] != 'Recovered' ]
-        confirmed = pd.DataFrame(df.groupby('Province_State')['Confirmed'].sum().sort_values())
+        confirmed = pd.DataFrame(df.groupby('Province_State')['Confirmed'].sum().sort_values(ascending=False))
         return {
             "states": [ str(state) for state in confirmed.index ],
             "confirmed": [ int(cnt) for cnt in confirmed['Confirmed'] ],
@@ -108,7 +108,7 @@ class USDeaths(Resource):
         df = pd.read_csv('data/daily_report.csv')
         df = df[ df['Country_Region'] == 'US'].drop(['FIPS','Admin2','Country_Region','Last_Update','Lat','Long_','Combined_Key'], axis=1)
         df = df[ df['Province_State'] != 'Recovered' ]
-        deaths = pd.DataFrame(df.groupby('Province_State')['Deaths'].sum().sort_values())
+        deaths = pd.DataFrame(df.groupby('Province_State')['Deaths'].sum().sort_values(ascending=False))
         return {
             "states": [ str(state) for state in deaths.index ],
             "deaths": [ int(cnt) for cnt in deaths['Deaths'] ],
@@ -119,7 +119,7 @@ class USBoth(Resource):
         df = pd.read_csv('data/daily_report.csv')
         df = df[ df['Country_Region'] == 'US'].drop(['FIPS','Admin2','Country_Region','Last_Update','Lat','Long_','Combined_Key'], axis=1)
         df = df[ df['Province_State'] != 'Recovered' ]
-        both = pd.DataFrame(df.groupby('Province_State')[ ['Confirmed', 'Deaths'] ].sum().sort_values(['Confirmed', 'Deaths']))
+        both = pd.DataFrame(df.groupby('Province_State')[ ['Confirmed', 'Deaths'] ].sum().sort_values(['Confirmed', 'Deaths'], ascending=False))
         return {
             "states": [ str(state) for state in both.index ],
             "confirmed": [ int(confirmed) for confirmed in both['Confirmed'] ],
