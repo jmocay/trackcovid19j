@@ -48,14 +48,14 @@ class BarChart {
         let canvasNames = ['canvas__confirmed', 'canvas__deaths']
         let data = [
             {
-                title: 'Confirmed',
-                states: chartData.states,
+                title: `${chartData.total_confirmed} Confirmed`,
+                states: chartData.states_confirmed,
                 cases: chartData.confirmed,
                 color: 'rgba(255, 69, 0, .5)',
             },
             {
-                title: 'Deaths',
-                states: chartData.states,
+                title: `${chartData.total_deaths} Deaths`,
+                states: chartData.states_deaths,
                 cases: chartData.deaths,
                 color: 'rgba(255, 0, 0, .5)',
             }
@@ -80,6 +80,13 @@ class BarChart {
                 options: {
                     responsive: true,
                     scales: {
+                        xAxes: [{
+                            ticks: {
+                                autoSkip: false,
+                                minRotation: 90,
+                                maxRotation: 90,
+                            }
+                        }],
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
