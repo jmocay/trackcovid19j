@@ -78,11 +78,25 @@ class NewsGrid {
         }
 
         const truncateText = (text, n) => {
-            return (text <= n) ? text : text.slice(0, n) + "..."
+            if (text.length <= n) {
+                return text
+            }
+
+            let i = text.indexOf(' ', n)
+            if (i > 0) {
+                return text.slice(0, i)
+            }
+            else {
+                return text
+            }
         }
 
         const createNewsCard = (article, i) => {
+            const cardClickedHandler = (url, evt) => {
+                window.location.assign(url)
+            }
             let className = "news__card"
+
             if (i%8 == 0) {
                 className = "news__card news__card_tall news__card_wide"
             }
@@ -100,22 +114,21 @@ class NewsGrid {
             newsDetails.className = "news__details"
 
             let newsTitle = document.createElement('h2')
-            newsTitle.textContent = truncateText(
+            newsTitle.innerText = truncateText(
                 article['title'], maxText[className].title
             )
+
             let newsDescription = document.createElement('p')
-            let anchor = document.createElement('a')
-            anchor.href = article['url']
-            anchor.textContent = truncateText(
+            newsDescription.innerText = truncateText(
                 article['description'], maxText[className].description
             )
-            newsDescription.append(anchor)
-
             newsDetails.append(newsTitle)
             newsDetails.append(newsDescription)
 
             newsCard.append(newsImg)
             newsCard.append(newsDetails)
+
+            newsCard.onclick = cardClickedHandler.bind(this, article['url'])
 
             return newsCard
         }
