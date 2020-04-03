@@ -27,7 +27,7 @@ window.onload = async () => {
 
 class NavBar {
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     initialize = () => {
@@ -43,7 +43,7 @@ class NavBar {
 class Sidebar {
 
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
         this.visible = false
     }
 
@@ -120,7 +120,7 @@ class Sidebar {
 class ConfirmedCasesMap {
 
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     getSpinner = () => {
@@ -234,7 +234,7 @@ class ConfirmedCasesMap {
 class CasesChart {
 
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     initialize = async () => {
@@ -348,7 +348,7 @@ class CasesChart {
 class CasesSummary {
 
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     initialize = async () => {}
@@ -392,7 +392,7 @@ class CasesSummary {
 class CasesByCountry {
 
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     initialize = async () => {

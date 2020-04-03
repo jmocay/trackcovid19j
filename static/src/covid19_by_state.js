@@ -2,17 +2,17 @@ var navBar
 var barChart;
 
 window.addEventListener('load', async ()=> {
-    navBar = new NavBar()
+    navBar = new NavBar(appConfig)
     navBar.initialize()
 
-    barChart = new BarChart()
-    barChart.initialize()
+    barChart = new BarChart(appConfig)
+    barChart.initialize(appConfig)
 
 })
 
 class NavBar {
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     initialize = () => {
@@ -24,7 +24,7 @@ class NavBar {
 
 class BarChart {
     constructor(cfg) {
-        this.urlPrefix = appConfig.serverUrl[appConfig.env]
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
     }
 
     getData = async () => {
