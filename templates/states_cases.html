@@ -1,0 +1,33 @@
+<html>
+
+    <head>
+        <title>COVID-19 US Cases by State</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <style>
+            @import url('static/css/states_case.css');
+        </style>
+    </head>
+
+    <body>
+        <div class="top__nav">
+            <h1>COVID-19 US Cases by State<h1></h1>
+            <a id="nav-covid19"">&#9782; Tracker</a>
+        </div>
+
+        <div class="main">
+            <div class="container__confirmed">
+                <div class="chart__confirmed">
+                    <canvas id="canvas__confirmed" class="canvas__confirmed"></canvas>
+                </div>
+            </div>
+            <div class="container__deaths">
+                <div class="chart__deaths">
+                    <canvas id="canvas__deaths" class="canvas__deaths"></canvas>
+                </div>
+            </div>
+        </div>
+        <script src="static/src/config.js"></script>
+        <script src="static/src/covid19_by_state.js"></script>
+    </body>
+
+</html>

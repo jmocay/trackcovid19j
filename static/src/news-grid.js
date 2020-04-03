@@ -2,8 +2,6 @@ var navBar
 var newsGrid
 
 window.onload = async () => {
-    appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
-
     navBar = new NavBar(appConfig)
     navBar.initialize()
 
@@ -13,7 +11,7 @@ window.onload = async () => {
 
 class NavBar {
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     initialize = () => {
@@ -24,7 +22,7 @@ class NavBar {
 
 class NewsGrid {
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     initialize = async () => {

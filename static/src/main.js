@@ -6,8 +6,6 @@ var casesSummary
 var casesDetails
 
 window.onload = async () => {
-    appConfig.urlPrefix = appConfig.serverUrl[appConfig.env]
-
     sideBar = new Sidebar(appConfig)
     sideBar.initialize()
 
@@ -29,23 +27,23 @@ window.onload = async () => {
 
 class NavBar {
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     initialize = () => {
         let navCountry = document.getElementById("navbar-country")
         navCountry.onclick = sideBar.toggleSidebar.bind(sideBar)
         let navNews = document.getElementById("navbar-news")
-        if (navNews) {
-            navNews.href = encodeURI(`${this.urlPrefix}/headlines`)
-        }
+        navNews.href = encodeURI(`${this.urlPrefix}/headlines`)
+        let navStates = document.getElementById("navbar-states")
+        navStates.href = encodeURI(`${this.urlPrefix}/states`)
     }
 }
 
 class Sidebar {
 
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
         this.visible = false
     }
 
@@ -122,7 +120,7 @@ class Sidebar {
 class ConfirmedCasesMap {
 
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     getSpinner = () => {
@@ -236,7 +234,7 @@ class ConfirmedCasesMap {
 class CasesChart {
 
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     initialize = async () => {
@@ -350,7 +348,7 @@ class CasesChart {
 class CasesSummary {
 
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     initialize = async () => {}
@@ -394,7 +392,7 @@ class CasesSummary {
 class CasesByCountry {
 
     constructor(cfg) {
-        this.urlPrefix = cfg.urlPrefix
+        this.urlPrefix = appConfig.serverUrl[appConfig.env]
     }
 
     initialize = async () => {

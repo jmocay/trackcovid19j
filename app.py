@@ -11,6 +11,9 @@ from resources.covid19api import (
     ConfirmedCasesMap,
     CountryLatLon,
     GlobalCasesTimeSeries,
+    USConfirmed,
+    USDeaths,
+    USBoth,
 )
 from resources.news import Headlines
 
@@ -24,6 +27,9 @@ api.add_resource(ConfirmedCasesMap, "/global_confirmed_cases")
 api.add_resource(CountryLatLon, "/country_latlon/<country>")
 api.add_resource(GlobalCasesTimeSeries, "/global_cases_timeseries/<country>")
 api.add_resource(Headlines, "/get_headlines/<topic>")
+api.add_resource(USConfirmed, "/us_confirmed")
+api.add_resource(USDeaths, "/us_deaths")
+api.add_resource(USBoth, "/usdata_both")
 
 @app.route('/')
 def index():
@@ -32,6 +38,10 @@ def index():
 @app.route('/headlines')
 def news_grid():
     return render_template("covid19_news.html")
+
+@app.route('/states')
+def states_cases():
+    return render_template("states_cases.html")
 
 if __name__ == '__main__':
     app.run(debug=False)
