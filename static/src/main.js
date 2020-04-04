@@ -72,6 +72,7 @@ class Sidebar {
     openSidebar = () => {
         document.getElementById("sidebar").style.width = "250px";
         document.getElementById("sidebar").style.zIndex = 1000;
+        document.getElementById("sidebar").scrollTo(0, 0)
         this.visible = true
     }
 
@@ -150,11 +151,11 @@ class ConfirmedCasesMap {
         this.mapDiv = mapDiv
         this.ccMap = ccMap
 
-        let mapData = await this.getMapData()
+        let mapData = await this.getData()
         this.show(mapData)
     }
 
-    getMapData = async () => {
+    getData = async () => {
         try {
             let url = encodeURI(`${this.urlPrefix}/global_confirmed_cases`)
             let res = await fetch(url, {
@@ -208,7 +209,7 @@ class ConfirmedCasesMap {
 
                 layer.bindTooltip(`
                         Location: <b>${mapData['location'][i]}</b><br>
-                        Case(s) confirmed: <b>${mapData['count'][i]}</b>
+                        Case(s) confirmed: <b>${mapData['count'][i].toLocaleString()}</b>
                     `).openTooltip()
                 layer.closeTooltip()
             }
@@ -282,7 +283,7 @@ class CasesChart {
                 scales: {
                     xAxes: [{
                         ticks: {
-                            callback: (xLabel, index, values) => {
+                            callback: (xLabel) => {
                                 return xLabel.toLocaleDateString()
                             }
                         }
@@ -290,6 +291,9 @@ class CasesChart {
                     yAxes: [{
                         ticks: {
                             beginAtZero: false,
+                            callback: (yLabel) => {
+                                return yLabel.toLocaleString()
+                            }
                         }
                     }]
                 }
@@ -380,7 +384,7 @@ class CasesSummary {
         categories.forEach((category) => {
             let a = document.getElementById(`${category}-summary`)
             if (summaryData[category] > 0) {
-                a.textContent = `${summaryData[category]}`
+                a.textContent = `${summaryData[category].toLocaleString()}`
             }
             else {
                 a.textContent = "0 or na"
@@ -462,7 +466,7 @@ class CasesByCountry {
             root.append(a)
 
             a = document.createElement("a")
-            a.textContent = `${casesData['total_' + item.category]} `
+            a.textContent = `${casesData['total_' + item.category].toLocaleString()} `
             a.id = `${item.category}-summary`
             a.className = "cases-by-country-header"
             a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
@@ -471,7 +475,7 @@ class CasesByCountry {
             root = document.getElementById(item.idDetails)
             casesData['countries_' + item.category].forEach((country, i) => {
                 a = document.createElement("a")
-                a.textContent = `${casesData[item.category][i]} ${country}`
+                a.textContent = `${casesData[item.category][i].toLocaleString()} ${country}`
                 a.className = "cases-by-country-item"
                 a.onclick = this.casesByCountryClickedHandler.bind(this, country)
                 root.append(a)

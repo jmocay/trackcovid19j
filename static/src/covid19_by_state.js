@@ -48,13 +48,15 @@ class BarChart {
         let canvasNames = ['canvas__confirmed', 'canvas__deaths']
         let data = [
             {
-                title: `${chartData.total_confirmed} Confirmed`,
+                title: `Total Confirmed: ${(chartData.total_confirmed).toLocaleString()}`,
+                label: 'Confirmed',
                 states: chartData.states_confirmed,
                 cases: chartData.confirmed,
                 color: 'rgba(255, 69, 0, .5)',
             },
             {
-                title: `${chartData.total_deaths} Deaths`,
+                title: `Total Deaths: ${(chartData.total_deaths).toLocaleString()}`,
+                label: 'Deaths',
                 states: chartData.states_deaths,
                 cases: chartData.deaths,
                 color: 'rgba(255, 0, 0, .5)',
@@ -69,7 +71,7 @@ class BarChart {
                     labels: data[i].states,
                     datasets: [
                         {
-                            label: data[i].title,
+                            label: data[i].label,
                             data: data[i].cases,
                             backgroundColor: data[i].color,
                             borderColor: 'rgba(255, 99, 132, 1)',
@@ -79,6 +81,14 @@ class BarChart {
                 },
                 options: {
                     responsive: true,
+                    title: {
+                        display: true,
+                        text: data[i].title,
+                        fontSize: 24,
+                        fontFamily: 'sans-serif',
+                        fontStyle: 'bold',
+                        fontColor: data[i].color,
+                    },
                     scales: {
                         xAxes: [{
                             ticks: {
@@ -90,11 +100,18 @@ class BarChart {
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
+                                callback: (xLabel, index, values) => {
+                                    return xLabel.toLocaleString()
+                                }
                             }
                         }]
-                    }
+                    },
+                    legend: {
+                        display: false,
+                    },
                 }
             });
         })
+
     }
 }
