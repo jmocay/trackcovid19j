@@ -31,11 +31,11 @@ class NavBar {
     }
 
     initialize = () => {
-        let navCountry = document.getElementById("navbar-country")
+        let navCountry = document.querySelector("#navbar-country")
         navCountry.onclick = sideBar.toggleSidebar.bind(sideBar)
-        let navNews = document.getElementById("navbar-news")
+        let navNews = document.querySelector("#navbar-news")
         navNews.href = encodeURI(`${this.urlPrefix}/headlines`)
-        let navStates = document.getElementById("navbar-states")
+        let navStates = document.querySelector("#navbar-states")
         navStates.href = encodeURI(`${this.urlPrefix}/states`)
     }
 }
@@ -70,14 +70,14 @@ class Sidebar {
     }
 
     openSidebar = () => {
-        document.getElementById("sidebar").style.width = "250px";
-        document.getElementById("sidebar").style.zIndex = 1000;
-        document.getElementById("sidebar").scrollTo(0, 0)
+        document.querySelector("#sidebar").style.width = "250px";
+        document.querySelector("#sidebar").style.zIndex = 1000;
+        document.querySelector("#sidebar").scrollTo(0, 0)
         this.visible = true
     }
 
     closeSidebar = () => {
-        document.getElementById("sidebar").style.width = "0"
+        document.querySelector("#sidebar").style.width = "0"
         this.visible = false
     }
 
@@ -107,7 +107,7 @@ class Sidebar {
         }
 
         let root = document.getElementById('sidebar')
-        let a = document.getElementById("sidebar-closebtn")
+        let a = document.querySelector("#sidebar-closebtn")
         a.onclick = this.closeSidebar.bind(this)
         
         createSidebarItem('Global', root)
@@ -127,7 +127,7 @@ class ConfirmedCasesMap {
     getSpinner = () => {
         if (!this.spinner) {
             let spinner = document.createElement('div')
-            spinner.className = "spinner"
+            spinner.classList.add("spinner")
             document.body.appendChild(spinner)
             this.spinner = spinner
         }
@@ -135,7 +135,7 @@ class ConfirmedCasesMap {
     }
 
     initialize = async () => {
-        let mapDiv = document.getElementById("map-div")
+        let mapDiv = document.querySelector("#map-div")
         let ccMap = L.map(mapDiv)
         ccMap.addEventListener('load', (evt) => {
             let spinner = this.getSpinner()
@@ -461,14 +461,14 @@ class CasesByCountry {
 
             let a = document.createElement("a")
             a.textContent = `${item.label}`
-            a.className = "cases-by-country-header"
+            a.classList.add("cases-by-country-header")
             a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
             root.append(a)
 
             a = document.createElement("a")
             a.textContent = `${casesData['total_' + item.category].toLocaleString()} `
             a.id = `${item.category}-summary`
-            a.className = "cases-by-country-header"
+            a.classList.add("cases-by-country-header")
             a.onclick = this.casesByCountryClickedHandler.bind(this, 'Global');
             root.append(a)
 
@@ -476,7 +476,7 @@ class CasesByCountry {
             casesData['countries_' + item.category].forEach((country, i) => {
                 a = document.createElement("a")
                 a.textContent = `${casesData[item.category][i].toLocaleString().padStart(8, ' ')} ${country}`
-                a.className = "cases-by-country-item"
+                a.classList.add("cases-by-country-item")
                 a.onclick = this.casesByCountryClickedHandler.bind(this, country)
                 root.append(a)
             })

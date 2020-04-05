@@ -33,7 +33,7 @@ class NewsGrid {
 
     createSpinner = () => {
         let spinner = document.createElement('div')
-        spinner.className = "spinner"
+        spinner.classList.add("spinner")
         this.spinner = spinner
         let img = document.createElement('img')
         img.src = "static/images/loading.gif"
@@ -109,7 +109,7 @@ class NewsGrid {
             newsImg.src = article['urlToImage']
 
             let newsDetails = document.createElement('div')
-            newsDetails.className = "news__details"
+            newsDetails.classList.add("news__details")
 
             let newsTitle = document.createElement('h2')
             newsTitle.innerText = truncateText(
@@ -131,7 +131,7 @@ class NewsGrid {
             return newsCard
         }
 
-        let root = document.getElementById("news-articles")
+        let root = document.querySelector("#news-articles")
         if (newsData.status === 'ok') {
             let articles = newsData.articles;
             articles.forEach((article, i) => {
