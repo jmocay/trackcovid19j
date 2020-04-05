@@ -67,6 +67,9 @@ class BarChart {
                 },
                 options: {
                     responsive: true,
+                    animation: {
+                        duration: 0,
+                    },
                     events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
                     title: {
                         display: true,
@@ -201,6 +204,9 @@ class LineChart {
                 data: {},
                 options: {
                     responsive: true,
+                    animation: {
+                        duration: 0,
+                    },
                     title: {
                         display: true,
                         fontSize: 24,
