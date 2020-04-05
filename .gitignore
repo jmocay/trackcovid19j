@@ -4,8 +4,6 @@ __py_cache__
 *.ipynb
 *.pyc
 newsapikey.txt
-time_series_covid19_confirmed_US.csv
-time_series_covid19_deaths_US.csv
 *news_articles.json
 new_states_cases.html
 

@@ -41,13 +41,20 @@ body {
 
 .main {
   display: grid;
-  grid-template-rows: repeat(2, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-top: calc(40px + 1.5rem);
 }
 
-.chart__confirmed,
-.chart__deaths {
+.bchart__confirmed,
+.bchart__deaths,
+.lchart__confirmed,
+.lchart__deaths {
   background-color: lightgoldenrodyellow;
   border-radius: 5px;
+}
+
+.canvas__confirmed {
+  width: 90%;
+  max-height: 240px;
 }

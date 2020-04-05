@@ -14,6 +14,8 @@ from resources.covid19api import (
     USConfirmed,
     USDeaths,
     USBoth,
+    USConfirmedTimeSeries,
+    USDeathsTimeSeries,
 )
 from resources.news import Headlines
 
@@ -30,6 +32,8 @@ api.add_resource(Headlines, "/get_headlines/<topic>")
 api.add_resource(USConfirmed, "/us_confirmed")
 api.add_resource(USDeaths, "/us_deaths")
 api.add_resource(USBoth, "/usdata_both")
+api.add_resource(USConfirmedTimeSeries, "/us_confirmed_series/<state>")
+api.add_resource(USDeathsTimeSeries, "/us_deaths_series/<state>")
 
 @app.route('/')
 def index():
