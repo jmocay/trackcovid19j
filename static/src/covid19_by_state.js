@@ -28,6 +28,7 @@ class NavBar {
 class BarChart {
     constructor(cfg) {
         this.urlPrefix = cfg.serverUrl[appConfig.env]
+        this.charts = {}
     }
 
     initialize = async () => {
@@ -66,6 +67,7 @@ class BarChart {
                 },
                 options: {
                     responsive: true,
+                    events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
                     title: {
                         display: true,
                         text: bchartSetting.title,
@@ -94,6 +96,11 @@ class BarChart {
                     legend: {
                         display: false,
                     },
+                    hover: {
+                        onHover: (evt) => {
+                            evt.target.style.cursor = 'pointer'
+                        }
+                    }
                 }
             });
         }
@@ -118,8 +125,16 @@ class BarChart {
         ]
 
         bchartSettings.forEach(bchartSetting => {
-            createBarChart({
+            this.charts[bchartSetting.canvas] = createBarChart({
                 ...bchartSetting
+            })
+            document.querySelector(`.${bchartSetting.canvas}`).addEventListener('click', () => {
+                let chart = this.charts[bchartSetting.canvas]
+                if (chart.tooltip._lastActive.length > 0) {
+                    let lastTooltipActive = chart.tooltip._lastActive[0]
+                    let state = lastTooltipActive._model.label
+                    lineChart.update(state)
+                }
             })
         })
     }
@@ -133,12 +148,8 @@ class LineChart {
 
     initialize = async () => {
         this.setup()
-
         let defaultState = 'New York'
-        this.chartSettings.forEach(async (chartSetting) => {
-            let chartData = await this.getData(defaultState, chartSetting)
-            this.show(chartData, defaultState, chartSetting)
-        })
+        this.update(defaultState)
     }
 
     getData = async (state, chartSetting) => {
