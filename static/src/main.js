@@ -475,7 +475,7 @@ class CasesByCountry {
             root = document.getElementById(item.idDetails)
             casesData['countries_' + item.category].forEach((country, i) => {
                 a = document.createElement("a")
-                a.textContent = `${casesData[item.category][i].toLocaleString()} ${country}`
+                a.textContent = `${casesData[item.category][i].toLocaleString().padStart(8, ' ')} ${country}`
                 a.className = "cases-by-country-item"
                 a.onclick = this.casesByCountryClickedHandler.bind(this, country)
                 root.append(a)
