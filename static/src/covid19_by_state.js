@@ -1,14 +1,18 @@
 var navBar
-var barChart;
+var barChart
+var lineChart
 
 window.addEventListener('load', async ()=> {
     navBar = new NavBar(appConfig)
     navBar.initialize()
 
     barChart = new BarChart(appConfig)
-    barChart.initialize(appConfig)
+    barChart.initialize()
 
+    lineChart = new LineChart(appConfig)
+    lineChart.initialize()
 })
+
 
 class NavBar {
     constructor(cfg) {
@@ -16,15 +20,19 @@ class NavBar {
     }
 
     initialize = () => {
-        let navCovid19 = document.getElementById('nav-covid19')
+        let navCovid19 = document.querySelector('.nav__covid19')
         navCovid19.href = encodeURI(`${this.urlPrefix}/`)
     }
 }
 
-
 class BarChart {
     constructor(cfg) {
         this.urlPrefix = cfg.serverUrl[appConfig.env]
+    }
+
+    initialize = async () => {
+        let chartData = await this.getData()
+        this.show(chartData)
     }
 
     getData = async () => {
@@ -39,43 +47,20 @@ class BarChart {
         return usData
     }
 
-    initialize = async () => {
-        let chartData = await this.getData()
-        this.show(chartData)
-    }
-
     show = (chartData) => {
-        let canvasNames = ['canvas__confirmed', 'canvas__deaths']
-        let data = [
-            {
-                title: `Total Confirmed: ${(chartData.total_confirmed).toLocaleString()}`,
-                label: 'Confirmed',
-                states: chartData.states_confirmed,
-                cases: chartData.confirmed,
-                color: 'rgba(255, 69, 0, .5)',
-            },
-            {
-                title: `Total Deaths: ${(chartData.total_deaths).toLocaleString()}`,
-                label: 'Deaths',
-                states: chartData.states_deaths,
-                cases: chartData.deaths,
-                color: 'rgba(255, 0, 0, .5)',
-            }
-        ]
-
-        canvasNames.forEach((canvasName, i) => {
-            let canvas = document.querySelector(`.${canvasName}`)
-            let chart = new Chart(canvas.getContext('2d'), {
+        const createBarChart = (bchartSetting) => {
+            let canvas = document.querySelector(`.${bchartSetting.canvas}`)
+            return new Chart(canvas.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: data[i].states,
+                    labels: bchartSetting.xLabels,
                     datasets: [
                         {
-                            label: data[i].label,
-                            data: data[i].cases,
-                            backgroundColor: data[i].color,
+                            label: bchartSetting.label,
+                            data: bchartSetting.ys,
+                            backgroundColor: bchartSetting.color,
                             borderColor: 'rgba(255, 99, 132, 1)',
-                            fill: false,
+                            fill: true,
                         }
                     ]
                 },
@@ -83,11 +68,11 @@ class BarChart {
                     responsive: true,
                     title: {
                         display: true,
-                        text: data[i].title,
+                        text: bchartSetting.title,
                         fontSize: 24,
                         fontFamily: 'sans-serif',
                         fontStyle: 'bold',
-                        fontColor: data[i].color,
+                        fontColor: bchartSetting.color,
                     },
                     scales: {
                         xAxes: [{
@@ -100,7 +85,7 @@ class BarChart {
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
-                                callback: (xLabel, index, values) => {
+                                callback: (xLabel) => {
                                     return xLabel.toLocaleString()
                                 }
                             }
@@ -111,7 +96,168 @@ class BarChart {
                     },
                 }
             });
-        })
+        }
 
+        let bchartSettings = [
+            {
+                canvas: 'bchart__canvas_confirmed',
+                title: `Total Confirmed: ${(chartData.total_confirmed).toLocaleString()}`,
+                label: 'Confirmed',
+                xLabels: chartData.states_confirmed,
+                ys: chartData.confirmed,
+                color: 'rgba(255, 69, 0, .5)',
+            },
+            {
+                canvas: 'bchart__canvas_deaths',
+                title: `Total Deaths: ${(chartData.total_deaths).toLocaleString()}`,
+                label: 'Deaths',
+                xLabels: chartData.states_deaths,
+                ys: chartData.deaths,
+                color: 'rgba(255, 0, 0, .5)',
+            }
+        ]
+
+        bchartSettings.forEach(bchartSetting => {
+            createBarChart({
+                ...bchartSetting
+            })
+        })
+    }
+}
+
+class LineChart {
+    constructor(cfg) {
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
+        this.charts = []
+    }
+
+    initialize = async () => {
+        this.setup()
+
+        let defaultState = 'New York'
+        this.chartSettings.forEach(async (chartSetting) => {
+            let chartData = await this.getData(defaultState, chartSetting)
+            this.show(chartData, defaultState, chartSetting)
+        })
+    }
+
+    getData = async (state, chartSetting) => {
+        try {
+            let url = encodeURI(`${this.urlPrefix}/${chartSetting.endpoint}/${state}`)
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let chartData = await res.json()
+            chartData[chartSetting.xs] = chartData[chartSetting.xs].map((dateStr) => new Date(dateStr))
+            return chartData;
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    update = async (state) => {
+        this.chartSettings.forEach(async (chartSetting) => {
+            let chartData = await this.getData(state, chartSetting)
+            this.show(chartData, state, chartSetting)
+        })
+    }
+
+    show = (chartData, title, chartSetting) => {
+        let chart = chartSetting.chart
+        chart.options.title.text = title
+        chart.data = {
+            labels: chartData[chartSetting.xs],
+            datasets: [
+                {
+                    label: chartSetting.label,
+                    data: chartData[chartSetting.ys],
+                    borderColor: chartSetting.color,
+                    fill: false,
+                },
+            ]
+        }
+        chart.update(0)
+    }
+
+    setup = () => {
+        const createLineChart = (canvas) => {
+            return new Chart(document.querySelector(`.${canvas}`).getContext('2d'), {
+                type: 'line',
+                data: {},
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        fontSize: 24,
+                        fontFamily: 'sans-serif',
+                        fontStyle: 'bold',
+                        fontColor: '#048080',
+                    },
+                    layout: {
+                        padding: {
+                            top: 10, left: 0,
+                            bottom: 0, right: 0,
+                        }
+                    },
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: (args) => {
+                                let tooltipData = args[0]
+                                return new Date(tooltipData.label).toLocaleDateString()
+                            },
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                callback: (xLabel) => {
+                                    return xLabel.toLocaleDateString()
+                                }
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: false,
+                                callback: (yLabel) => {
+                                    return yLabel.toLocaleString()
+                                }
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+        let chartSettings = [
+            {
+                canvas: 'lchart__canvas_confirmed',
+                endpoint: 'us_confirmed_series',
+                label: 'Confirmed',
+                xs: 'confirmed_dates',
+                ys: 'confirmed_count',
+                color: 'rgba(255, 69, 0, .5)'
+            },
+            {
+                canvas: 'lchart__canvas_deaths',
+                endpoint: 'us_deaths_series',
+                label: 'Deaths',
+                xs: 'deaths_dates',
+                ys: 'deaths_count',
+                color: 'rgba(255, 0, 0, .5)'
+            }
+        ]
+        this.chartSettings = chartSettings.map((chartSetting) => {
+            return {
+                ...chartSetting,
+                chart: createLineChart(chartSetting.canvas)
+            }
+        })
     }
 }

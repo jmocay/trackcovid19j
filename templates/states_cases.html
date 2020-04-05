@@ -11,19 +11,23 @@
     <body>
         <div class="top__nav">
             <h1>COVID-19 US Cases by State<h1></h1>
-            <a id="nav-covid19"">&#9782; Tracker</a>
+            <a class="nav__covid19"">&#9782; Tracker</a>
         </div>
 
         <div class="main">
-            <div class="container__confirmed">
-                <div class="chart__confirmed">
-                    <canvas id="canvas__confirmed" class="canvas__confirmed"></canvas>
-                </div>
+            <div class="bchart__confirmed">
+                <canvas id="bchart__canvas_confirmed" class="bchart__canvas_confirmed"></canvas>
             </div>
-            <div class="container__deaths">
-                <div class="chart__deaths">
-                    <canvas id="canvas__deaths" class="canvas__deaths"></canvas>
-                </div>
+            <div class="bchart__deaths">
+                <canvas id="bchart__canvas_deaths" class="bchart__canvas_deaths"></canvas>
+            </div>
+
+            <div class="lchart__confirmed">
+                <canvas id="lchart__canvas_confirmed" class="lchart__canvas_confirmed"></canvas>
+            </div>
+
+            <div class="lchart__deaths">
+                <canvas id="lchart__canvas_deaths" class="lchart__canvas_deaths"></canvas>
             </div>
         </div>
         <script src="static/src/config.js"></script>
