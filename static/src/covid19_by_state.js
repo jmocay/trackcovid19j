@@ -1,6 +1,7 @@
 var navBar
 var barChart
 var lineChart
+var polarChart
 
 window.addEventListener('load', async ()=> {
     navBar = new NavBar(appConfig)
@@ -11,6 +12,9 @@ window.addEventListener('load', async ()=> {
 
     lineChart = new LineChart(appConfig)
     lineChart.initialize()
+
+    polarChart = new PolarChart(appConfig)
+    polarChart.initialize()
 })
 
 
@@ -50,7 +54,7 @@ class BarChart {
 
     show = (chartData) => {
         const createBarChart = (bchartSetting) => {
-            let canvas = document.querySelector(`.${bchartSetting.canvas}`)
+            let canvas = document.querySelector(`.${bchartSetting.canvasClass}`)
             return new Chart(canvas.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -111,7 +115,7 @@ class BarChart {
 
         let bchartSettings = [
             {
-                canvas: 'bchart__canvas_confirmed',
+                canvasClass: 'bchart__canvas_confirmed',
                 title: `Total Confirmed: ${(chartData.total_confirmed).toLocaleString()}`,
                 label: 'Confirmed',
                 xLabels: chartData.states_confirmed,
@@ -120,7 +124,7 @@ class BarChart {
                 backgroundColor: 'rgba(255, 69, 0, .5)',
             },
             {
-                canvas: 'bchart__canvas_deaths',
+                canvasClass: 'bchart__canvas_deaths',
                 title: `Total Deaths: ${(chartData.total_deaths).toLocaleString()}`,
                 label: 'Deaths',
                 xLabels: chartData.states_deaths,
@@ -131,15 +135,16 @@ class BarChart {
         ]
 
         bchartSettings.forEach(bchartSetting => {
-            this.charts[bchartSetting.canvas] = createBarChart({
+            this.charts[bchartSetting.canvasClass] = createBarChart({
                 ...bchartSetting
             })
-            document.querySelector(`.${bchartSetting.canvas}`).addEventListener('click', () => {
-                let chart = this.charts[bchartSetting.canvas]
+            document.querySelector(`.${bchartSetting.canvasClass}`).addEventListener('click', () => {
+                let chart = this.charts[bchartSetting.canvasClass]
                 if (chart.tooltip._lastActive.length > 0) {
                     let lastTooltipActive = chart.tooltip._lastActive[0]
                     let state = lastTooltipActive._model.label
                     lineChart.update(state)
+                    polarChart.update(state)
                 }
             })
         })
@@ -202,7 +207,7 @@ class LineChart {
 
     setup = () => {
         const createLineChart = (chartSetting) => {
-            return new Chart(document.querySelector(`.${chartSetting.canvas}`).getContext('2d'), {
+            return new Chart(document.querySelector(`.${chartSetting.canvasClass}`).getContext('2d'), {
                 type: 'line',
                 data: {},
                 options: {
@@ -257,7 +262,7 @@ class LineChart {
 
         let chartSettings = [
             {
-                canvas: 'lchart__canvas_confirmed',
+                canvasClass: 'lchart__canvas_confirmed',
                 endpoint: 'us_confirmed_series',
                 label: 'Confirmed Cases',
                 xs: 'confirmed_dates',
@@ -265,7 +270,7 @@ class LineChart {
                 color: 'rgba(255, 69, 0, .5)'
             },
             {
-                canvas: 'lchart__canvas_deaths',
+                canvasClass: 'lchart__canvas_deaths',
                 endpoint: 'us_deaths_series',
                 label: 'Deaths',
                 xs: 'deaths_dates',
@@ -273,7 +278,7 @@ class LineChart {
                 color: 'rgba(255, 0, 0, .5)'
             },
             {
-                canvas: 'lchart__canvas_confirmed_new',
+                canvasClass: 'lchart__canvas_confirmed_new',
                 endpoint: 'us_new_confirmed_series',
                 label: 'New Confirmed Cases',
                 xs: 'confirmed_dates',
@@ -281,7 +286,7 @@ class LineChart {
                 color: 'rgba(255, 69, 0, .5)'
             },
             {
-                canvas: 'lchart__canvas_deaths_new',
+                canvasClass: 'lchart__canvas_deaths_new',
                 endpoint: 'us_new_deaths_series',
                 label: 'New Deaths',
                 xs: 'deaths_dates',
@@ -293,6 +298,115 @@ class LineChart {
             return {
                 ...chartSetting,
                 chart: createLineChart(chartSetting)
+            }
+        })
+    }
+}
+
+class PolarChart {
+    constructor(cfg) {
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
+        this.charts = []
+    }
+
+    initialize = () => {
+        this.setup()
+        let defaultState = 'New York'
+        this.update(defaultState)
+    }
+
+    getData = async (state, chartSetting) => {
+        try {
+            let url = encodeURI(`${this.urlPrefix}/${chartSetting.endpoint}/${state}`)
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let chartData = await res.json()
+            return chartData;
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    show = (chartData, state, chartSetting) => {
+        const selectColor = (i) => {
+            let colorWheel = [
+                'rgba(255,0,255,1)',
+                'rgba(0,0,255,1)',
+                'rgba(255,0,0,1)',
+                'rgba(0,128,0,1)',
+                'rgba(255,165,0,1)',
+                'rgba(0,0,128,1)',
+                'rgba(127,255,212,1)',
+                'rgba(255,69,0,1)',
+                'rgba(0,128,128,1)',
+                'rgba(255,255,0,1)',
+                'rgba(128,128,0,1)',
+                'rgba(128,128,128,1)',
+            ]
+            return colorWheel[i % colorWheel.length]
+        }
+
+        chartData[chartSetting.xs][0] = `${chartData[chartSetting.xs][0]} - ${chartSetting.label}`
+
+        let chart = chartSetting.chart
+        chart.data = {
+            datasets: [
+                {
+                    data: chartData[chartSetting.ys],
+                    backgroundColor: chartData[chartSetting.ys].map((y, i) => selectColor(i)),
+                },
+            ],
+            labels: chartData[chartSetting.xs]
+        }
+        chart.update(0)
+    }
+
+    update = (state) => {
+        this.chartSettings.forEach(async (chartSetting) => {
+            let chartData = await this.getData(state, chartSetting)
+            this.show(chartData, state, chartSetting)
+        })
+    }
+
+    setup = () => {
+        const createPolarChart = (chartSetting) => {
+            return new Chart(document.querySelector(`.${chartSetting.canvasClass}`).getContext('2d'), {
+                type: 'polarArea',
+                data: {},
+                options: {
+                    responsive: true,
+                    animation: {
+                        duration: 0,
+                    },
+                },
+            });
+        }
+
+        let chartSettings = [
+            {
+                canvasClass: 'pchart__canvas_confirmed',
+                endpoint: 'us_county_confirmed',
+                label: 'Confirmed',
+                xs: 'counties',
+                ys: 'count',
+            },
+            {
+                canvasClass: 'pchart__canvas_deaths',
+                endpoint: 'us_county_deaths',
+                label: 'Deaths',
+                xs: 'counties',
+                ys: 'count',
+            },
+        ]
+        this.chartSettings = chartSettings.map((chartSetting) => {
+            return {
+                ...chartSetting,
+                chart: createPolarChart(chartSetting)
             }
         })
     }
