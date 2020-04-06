@@ -59,7 +59,8 @@ class BarChart {
                         {
                             label: bchartSetting.label,
                             data: bchartSetting.ys,
-                            backgroundColor: bchartSetting.color,
+                            backgroundColor: bchartSetting.backgroundColor,
+                            hoverBackgroundColor: 'rgba(0, 255, 255, 1)',
                             borderColor: 'rgba(255, 99, 132, 1)',
                             fill: true,
                         }
@@ -116,6 +117,7 @@ class BarChart {
                 xLabels: chartData.states_confirmed,
                 ys: chartData.confirmed,
                 color: 'rgba(255, 69, 0, .5)',
+                backgroundColor: 'rgba(255, 69, 0, .5)',
             },
             {
                 canvas: 'bchart__canvas_deaths',
@@ -124,6 +126,7 @@ class BarChart {
                 xLabels: chartData.states_deaths,
                 ys: chartData.deaths,
                 color: 'rgba(255, 0, 0, .5)',
+                backgroundColor: 'rgba(255, 69, 0, .5)',
             }
         ]
 
@@ -180,9 +183,9 @@ class LineChart {
         })
     }
 
-    show = (chartData, title, chartSetting) => {
+    show = (chartData, state, chartSetting) => {
         let chart = chartSetting.chart
-        chart.options.title.text = title
+        chart.options.title.text = `${state} - ${chartSetting.label}`
         chart.data = {
             labels: chartData[chartSetting.xs],
             datasets: [
@@ -198,8 +201,8 @@ class LineChart {
     }
 
     setup = () => {
-        const createLineChart = (canvas) => {
-            return new Chart(document.querySelector(`.${canvas}`).getContext('2d'), {
+        const createLineChart = (chartSetting) => {
+            return new Chart(document.querySelector(`.${chartSetting.canvas}`).getContext('2d'), {
                 type: 'line',
                 data: {},
                 options: {
@@ -212,7 +215,7 @@ class LineChart {
                         fontSize: 24,
                         fontFamily: 'sans-serif',
                         fontStyle: 'bold',
-                        fontColor: '#048080',
+                        fontColor: chartSetting.color,
                     },
                     layout: {
                         padding: {
@@ -221,7 +224,7 @@ class LineChart {
                         }
                     },
                     legend: {
-                        position: 'top',
+                        display: false
                     },
                     tooltips: {
                         callbacks: {
@@ -256,7 +259,7 @@ class LineChart {
             {
                 canvas: 'lchart__canvas_confirmed',
                 endpoint: 'us_confirmed_series',
-                label: 'Confirmed',
+                label: 'Confirmed Cases',
                 xs: 'confirmed_dates',
                 ys: 'confirmed_count',
                 color: 'rgba(255, 69, 0, .5)'
@@ -268,12 +271,28 @@ class LineChart {
                 xs: 'deaths_dates',
                 ys: 'deaths_count',
                 color: 'rgba(255, 0, 0, .5)'
+            },
+            {
+                canvas: 'lchart__canvas_confirmed_new',
+                endpoint: 'us_new_confirmed_series',
+                label: 'New Confirmed Cases',
+                xs: 'confirmed_dates',
+                ys: 'confirmed_count',
+                color: 'rgba(255, 69, 0, .5)'
+            },
+            {
+                canvas: 'lchart__canvas_deaths_new',
+                endpoint: 'us_new_deaths_series',
+                label: 'New Deaths',
+                xs: 'deaths_dates',
+                ys: 'deaths_count',
+                color: 'rgba(255, 0, 0, .5)'
             }
         ]
         this.chartSettings = chartSettings.map((chartSetting) => {
             return {
                 ...chartSetting,
-                chart: createLineChart(chartSetting.canvas)
+                chart: createLineChart(chartSetting)
             }
         })
     }

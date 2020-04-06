@@ -9,6 +9,7 @@
     </head>
 
     <body>
+
         <div class="top__nav">
             <h1>COVID-19 US Cases by State<h1></h1>
             <a class="nav__covid19"">&#9782; Home</a>
@@ -16,20 +17,29 @@
 
         <div class="main">
             <div class="bchart__confirmed">
-                <canvas id="bchart__canvas_confirmed" class="bchart__canvas_confirmed"></canvas>
+                <canvas class="bchart__canvas_confirmed"></canvas>
             </div>
             <div class="bchart__deaths">
-                <canvas id="bchart__canvas_deaths" class="bchart__canvas_deaths"></canvas>
+                <canvas class="bchart__canvas_deaths"></canvas>
             </div>
 
             <div class="lchart__confirmed">
-                <canvas id="lchart__canvas_confirmed" class="lchart__canvas_confirmed"></canvas>
+                <canvas class="lchart__canvas_confirmed"></canvas>
             </div>
 
             <div class="lchart__deaths">
-                <canvas id="lchart__canvas_deaths" class="lchart__canvas_deaths"></canvas>
+                <canvas class="lchart__canvas_deaths"></canvas>
+            </div>
+
+            <div class="lchart__confirmed_new">
+                <canvas class="lchart__canvas_confirmed_new"></canvas>
+            </div>
+
+            <div class="lchart__deaths_new">
+                <canvas class="lchart__canvas_deaths_new"></canvas>
             </div>
         </div>
+
         <script src="static/src/config.js"></script>
         <script src="static/src/covid19_by_state.js"></script>
     </body>
