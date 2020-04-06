@@ -151,3 +151,25 @@ class USDeathsTimeSeries(Resource):
             "deaths_dates": [ str(dt) for dt in df.index ],
             "deaths_count": [ int(cnt) for cnt in df['Deaths'] ]
         }
+
+class USNewConfirmedTimeSeries(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_confirmed_US.csv')
+        df = df[ df['Province_State'] == state ]
+        df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key'], axis=1).sum())
+        df = df.diff().fillna(0).rename(columns={0: 'Confirmed'})
+        return {
+            "confirmed_dates": [ str(dt) for dt in df.index ],
+            "confirmed_count": [ int(cnt) for cnt in df['Confirmed'] ]
+        }
+
+class USNewDeathsTimeSeries(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_deaths_US.csv')
+        df = df[ df['Province_State'] == state ]
+        df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key','Population'], axis=1).sum())
+        df = df.diff().fillna(0).rename(columns={0: 'Deaths'})
+        return {
+            "deaths_dates": [ str(dt) for dt in df.index ],
+            "deaths_count": [ int(cnt) for cnt in df['Deaths'] ]
+        }

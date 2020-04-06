@@ -49,12 +49,9 @@ body {
 .bchart__confirmed,
 .bchart__deaths,
 .lchart__confirmed,
-.lchart__deaths {
+.lchart__deaths,
+.lchart__confirmed_new,
+.lchart__deaths_new {
   background-color: lightgoldenrodyellow;
   border-radius: 5px;
-}
-
-.canvas__confirmed {
-  width: 90%;
-  max-height: 240px;
 }
