@@ -51,7 +51,9 @@ body {
 .lchart__confirmed,
 .lchart__deaths,
 .lchart__confirmed_new,
-.lchart__deaths_new {
+.lchart__deaths_new,
+.pchart__confirmed,
+.pchart__deaths {
   background-color: lightgoldenrodyellow;
   border-radius: 5px;
 }

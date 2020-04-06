@@ -1,5 +1,5 @@
 const appConfig = {
-    env: 'PROD',
+    env: 'DEV',
     serverUrl: {
         DEV: 'http://localhost:5000',
         PROD: 'http://trackcovid19j.herokuapp.com',
