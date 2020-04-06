@@ -173,3 +173,25 @@ class USNewDeathsTimeSeries(Resource):
             "deaths_dates": [ str(dt) for dt in df.index ],
             "deaths_count": [ int(cnt) for cnt in df['Deaths'] ]
         }
+
+class USCountiesConfirmed(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_confirmed_US.csv')
+        df = df[ df['Province_State'] == state ]
+        df = pd.DataFrame({ "Counties": df.loc[:, 'Admin2'], "Confirmed": df.iloc[:, -1] })
+        df = df[ df['Confirmed'] > 0 ].sort_values('Confirmed', ascending=False).head(10)
+        return {
+            "counties": [ str(county) for county in df['Counties'] ],
+            "count": [ int(cnt) for cnt in df['Confirmed'] ]
+        }
+
+class USCountiesDeaths(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_deaths_US.csv')
+        df = df[ df['Province_State'] == state ]
+        df = pd.DataFrame({ "Counties": df.loc[:, 'Admin2'], "Deaths": df.iloc[:, -1] })
+        df = df[ df['Deaths'] > 0 ].sort_values('Deaths', ascending=False).head(10)
+        return {
+            "counties": [ str(county) for county in df['Counties'] ],
+            "count": [ int(cnt) for cnt in df['Deaths'] ]
+        }
