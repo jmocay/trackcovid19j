@@ -216,9 +216,9 @@ class LineChart {
         this.update(defaultState)
     }
 
-    getData = async (state, chartSetting) => {
+    getData = async (state, chartLine) => {
         try {
-            let url = encodeURI(`${this.urlPrefix}/${chartSetting.endpoint}/${state}`)
+            let url = encodeURI(`${this.urlPrefix}/${chartLine.endpoint}/${state}`)
             let res = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -226,7 +226,7 @@ class LineChart {
                 },
             })
             let chartData = await res.json()
-            chartData[chartSetting.xs] = chartData[chartSetting.xs].map((dateStr) => new Date(dateStr))
+            chartData[chartLine.xs] = chartData[chartLine.xs].map((dateStr) => new Date(dateStr))
             return chartData;
         }
         catch (err) {
@@ -235,25 +235,32 @@ class LineChart {
     }
 
     update = async (state) => {
-        this.chartSettings.forEach(async (chartSetting) => {
-            let chartData = await this.getData(state, chartSetting)
-            this.show(chartData, state, chartSetting)
-        })
+        for (let chartSetting of this.chartSettings) {
+            let datasets = []
+            let xLabels;
+            for (let chartLine of chartSetting.chartLines) {
+                let chartData = await this.getData(state, chartLine)
+                if (!xLabels) {
+                    xLabels = chartData[chartLine.xs]
+                }
+                datasets.push({
+                    label: chartLine.label,
+                    data: chartData[chartLine.ys],
+                    borderColor: chartLine.borderColor,
+                    fill: false,
+                })
+            }
+
+            this.show(state, xLabels, datasets, chartSetting)
+        }
     }
 
-    show = (chartData, state, chartSetting) => {
+    show = (state, xLabels, datasets, chartSetting) => {
         let chart = chartSetting.chart
-        chart.options.title.text = `${state} - ${chartSetting.label}`
+        chart.options.title.text = `${state} - ${chartSetting.title}`
         chart.data = {
-            labels: chartData[chartSetting.xs],
-            datasets: [
-                {
-                    label: chartSetting.label,
-                    data: chartData[chartSetting.ys],
-                    borderColor: chartSetting.color,
-                    fill: false,
-                },
-            ]
+            labels: xLabels,
+            datasets: datasets,
         }
         chart.update(0)
     }
@@ -282,7 +289,7 @@ class LineChart {
                         }
                     },
                     legend: {
-                        display: false
+                        display: true,
                     },
                     tooltips: {
                         callbacks: {
@@ -316,35 +323,73 @@ class LineChart {
         let chartSettings = [
             {
                 canvasClass: 'lchart__canvas_confirmed',
-                endpoint: 'us_confirmed_series',
-                label: 'Confirmed Cases',
-                xs: 'confirmed_dates',
-                ys: 'confirmed_count',
-                color: 'rgba(255, 69, 0, .5)'
+                title: 'Confirmed Cases',
+                color: 'rgba(255, 69, 0, .5)',
+                chartLines: [
+                    {
+                        endpoint: 'us_confirmed_series',
+                        xs: 'date',
+                        ys: 'cumm_confirmed',
+                        label: 'Confirmed',
+                        borderColor: 'rgba(255, 69, 0, .5)',
+                    },
+                ]
             },
             {
                 canvasClass: 'lchart__canvas_deaths',
-                endpoint: 'us_deaths_series',
-                label: 'Deaths',
-                xs: 'deaths_dates',
-                ys: 'deaths_count',
-                color: 'rgba(255, 0, 0, .5)'
+                title: 'Deaths',
+                color: 'rgba(255, 0, 0, .5)',
+                chartLines: [
+                    {
+                        endpoint: 'us_deaths_series',
+                        xs: 'date',
+                        ys: 'cumm_deaths',
+                        label: 'Deaths',
+                        borderColor: 'rgba(255, 0, 0, .5)',
+                    },
+                ]
             },
             {
                 canvasClass: 'lchart__canvas_confirmed_new',
-                endpoint: 'us_new_confirmed_series',
-                label: 'New Confirmed Cases',
-                xs: 'confirmed_dates',
-                ys: 'confirmed_count',
-                color: 'rgba(255, 69, 0, .5)'
+                title: 'New Confirmed Cases',
+                color: 'rgba(255, 69, 0, .5)',
+                chartLines: [
+                    {
+                        endpoint: 'us_new_confirmed_series',
+                        xs: 'date',
+                        ys: 'new_confirmed',
+                        label: 'New Confirmed',
+                        borderColor: 'rgba(255, 69, 0, .5)',
+                    },
+                    {
+                        endpoint: 'us_new_confirmed_moving_avg',
+                        xs: 'date',
+                        ys: 'moving_avg',
+                        label: '7-day Moving Average',
+                        borderColor: 'rgba(0, 255, 255, .5)',
+                    },
+                ]
             },
             {
                 canvasClass: 'lchart__canvas_deaths_new',
-                endpoint: 'us_new_deaths_series',
-                label: 'New Deaths',
-                xs: 'deaths_dates',
-                ys: 'deaths_count',
-                color: 'rgba(255, 0, 0, .5)'
+                title: 'New Deaths',
+                color: 'rgba(255, 0, 0, .5)',
+                chartLines: [
+                    {
+                        endpoint: 'us_new_deaths_series',
+                        xs: 'date',
+                        ys: 'new_deaths',
+                        label: 'New Deaths',
+                        borderColor: 'rgba(255, 0, 0, .5)',
+                    },
+                    {
+                        endpoint: 'us_new_deaths_moving_avg',
+                        xs: 'date',
+                        ys: 'moving_avg',
+                        label: '7-day Moving Average',
+                        borderColor: 'rgba(0, 255, 255, .5)',
+                    },
+                ]
             }
         ]
         this.chartSettings = chartSettings.map((chartSetting) => {
@@ -388,18 +433,18 @@ class PolarChart {
     show = (chartData, state, chartSetting) => {
         const selectColor = (i) => {
             let colorWheel = [
-                'rgba(255,0,255,1)',
-                'rgba(0,0,255,1)',
-                'rgba(255,0,0,1)',
-                'rgba(0,128,0,1)',
-                'rgba(255,165,0,1)',
-                'rgba(0,0,128,1)',
-                'rgba(127,255,212,1)',
-                'rgba(255,69,0,1)',
-                'rgba(0,128,128,1)',
-                'rgba(255,255,0,1)',
-                'rgba(128,128,0,1)',
-                'rgba(128,128,128,1)',
+                'rgba(255, 0, 255, 1)',
+                'rgba(0, 0, 255, 1)',
+                'rgba(255, 0, 0, 1)',
+                'rgba(0, 128, 0, 1)',
+                'rgba(255, 165, 0, 1)',
+                'rgba(0, 0, 128, 1)',
+                'rgba(127, 255, 212, 1)',
+                'rgba(255, 69, 0, 1)',
+                'rgba(0, 128, 128, 1)',
+                'rgba(255, 255, 0, 1)',
+                'rgba(128, 128, 0, 1)',
+                'rgba(128, 128, 128, 1)',
             ]
             return colorWheel[i % colorWheel.length]
         }
