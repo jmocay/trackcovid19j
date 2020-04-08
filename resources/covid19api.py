@@ -137,8 +137,8 @@ class USConfirmedTimeSeries(Resource):
         df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key'], axis=1).sum())
         df.rename(columns={0: 'Confirmed'}, inplace=True)
         return {
-            "confirmed_dates": [ str(dt) for dt in df.index ],
-            "confirmed_count": [ int(cnt) for cnt in df['Confirmed'] ]
+            "date": [ str(dt) for dt in df.index ],
+            "cumm_confirmed": [ int(cnt) for cnt in df['Confirmed'] ]
         }
 
 class USDeathsTimeSeries(Resource):
@@ -148,8 +148,8 @@ class USDeathsTimeSeries(Resource):
         df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key','Population'], axis=1).sum())
         df.rename(columns={0: 'Deaths'}, inplace=True)
         return {
-            "deaths_dates": [ str(dt) for dt in df.index ],
-            "deaths_count": [ int(cnt) for cnt in df['Deaths'] ]
+            "date": [ str(dt) for dt in df.index ],
+            "cumm_deaths": [ int(cnt) for cnt in df['Deaths'] ]
         }
 
 class USNewConfirmedTimeSeries(Resource):
@@ -159,8 +159,19 @@ class USNewConfirmedTimeSeries(Resource):
         df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key'], axis=1).sum())
         df = df.diff().fillna(0).rename(columns={0: 'Confirmed'})
         return {
-            "confirmed_dates": [ str(dt) for dt in df.index ],
-            "confirmed_count": [ int(cnt) for cnt in df['Confirmed'] ]
+            "date": [ str(dt) for dt in df.index ],
+            "new_confirmed": [ int(cnt) for cnt in df['Confirmed'] ]
+        }
+
+class USNewConfirmedMovingAvg(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_confirmed_US.csv')
+        df = df[ df['Province_State'] == state ]
+        df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key'], axis=1).sum())
+        df = df.diff().rolling(7).mean().fillna(0).rename(columns={0: 'MovingAverage'})
+        return {
+            "date": [ str(dt) for dt in df.index ],
+            "moving_avg": [ int(cnt) for cnt in df['MovingAverage'] ]
         }
 
 class USNewDeathsTimeSeries(Resource):
@@ -170,8 +181,19 @@ class USNewDeathsTimeSeries(Resource):
         df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key','Population'], axis=1).sum())
         df = df.diff().fillna(0).rename(columns={0: 'Deaths'})
         return {
-            "deaths_dates": [ str(dt) for dt in df.index ],
-            "deaths_count": [ int(cnt) for cnt in df['Deaths'] ]
+            "date": [ str(dt) for dt in df.index ],
+            "new_deaths": [ int(cnt) for cnt in df['Deaths'] ]
+        }
+
+class USNewDeathsMovingAvg(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_deaths_US.csv')
+        df = df[ df['Province_State'] == state ]
+        df = pd.DataFrame(df.drop(['UID','iso2','iso3','code3','FIPS','Admin2', 'Province_State','Country_Region','Lat','Long_','Combined_Key','Population'], axis=1).sum())
+        df = df.diff().rolling(7).mean().fillna(0).rename(columns={0: 'MovingAverage'})
+        return {
+            "date": [ str(dt) for dt in df.index ],
+            "moving_avg": [ int(cnt) for cnt in df['MovingAverage'] ]
         }
 
 class USCountiesConfirmed(Resource):

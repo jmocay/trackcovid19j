@@ -18,6 +18,8 @@ from resources.covid19api import (
     USDeathsTimeSeries,
     USNewConfirmedTimeSeries,
     USNewDeathsTimeSeries,
+    USNewConfirmedMovingAvg,
+    USNewDeathsMovingAvg,
     USCountiesConfirmed,
     USCountiesDeaths,
 )
@@ -39,6 +41,8 @@ api.add_resource(USBoth, "/usdata_both")
 api.add_resource(USConfirmedTimeSeries, "/us_confirmed_series/<state>")
 api.add_resource(USDeathsTimeSeries, "/us_deaths_series/<state>")
 api.add_resource(USNewConfirmedTimeSeries, "/us_new_confirmed_series/<state>")
+api.add_resource(USNewConfirmedMovingAvg, "/us_new_confirmed_moving_avg/<state>")
+api.add_resource(USNewDeathsMovingAvg, "/us_new_deaths_moving_avg/<state>")
 api.add_resource(USNewDeathsTimeSeries, "/us_new_deaths_series/<state>")
 api.add_resource(USCountiesConfirmed, "/us_county_confirmed/<state>")
 api.add_resource(USCountiesDeaths, "/us_county_deaths/<state>")
