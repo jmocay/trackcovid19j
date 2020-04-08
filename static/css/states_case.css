@@ -100,7 +100,7 @@ header {
 }
 
 .tab__nav>button:hover,
-.tab__nav>button:active {
+.tab__nav_button_active {
   color: black;
   background: rgb(29, 135, 206);
 }
@@ -121,13 +121,6 @@ header {
   display: none;
 }
 
-.tab__states,
-.tab__cases,
-.tab__new_cases,
-.tab__counties {
-  background: transparent;
-}
-
 .chart__container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -136,8 +129,7 @@ header {
   align-items: center;
 }
 
-.chart__confirmed,
-.chart__deaths {
+.chart {
   background: lightgoldenrodyellow;
   width: 100%;
   height: 80%;
