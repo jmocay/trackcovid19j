@@ -75,11 +75,11 @@ header {
   display: grid;
   height: 640px;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(10, 1fr);
+  grid-template-rows: repeat(20, 1fr);
 }
 
 .tab__nav {
-  height: 64px;
+  height: 40px;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   align-items: center;
@@ -93,20 +93,24 @@ header {
   color: white;
   background: lightslategray;
   border-radius: 20px 20px 0 0;
+  border-bottom: 0;
   text-align: center;
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-.tab__nav>button:hover,
-.tab__nav_button_active {
+.tab__nav>button:hover {
+  color: black;
+  background: lemonchiffon;
+}
+.tab__nav>button.active {
   color: black;
   background: rgb(29, 135, 206);
 }
 
 .tabs {
-  grid-row: span 9;
+  grid-row: span 19;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);

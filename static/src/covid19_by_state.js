@@ -46,6 +46,7 @@ class Tabs {
         }
         
         this.selectTab('tab__states')
+        document.querySelector('#tab__nav_states').classList.add('active')
 
         for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
             button.addEventListener('click', this.tabNavClicked)
@@ -62,11 +63,10 @@ class Tabs {
 
         this.selectTab(btnTabs[evt.target.id])
 
-        for (let button of document.querySelector(".tab__nav").querySelectorAll("button")) {
-            button.classList.remove("tab__nav_button_active")
+        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
+            button.classList.remove('active')
         }
-
-        evt.target.classList.add("tab__nav_button_active")
+        evt.target.classList.add('active')
     }
 
     selectTab = (tabId) => {
@@ -196,6 +196,8 @@ class BarChart {
                     lineChart.update(state)
                     polarChart.update(state)
                     tabs.selectTab('tab__cases')
+                    document.querySelector('#tab__nav_states').classList.remove('active')
+                    document.querySelector('#tab__nav_cases').classList.add('active')
                 }
             })
         })
