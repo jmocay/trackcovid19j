@@ -29,48 +29,48 @@
         </header>
         <div class="content">
             <div class="tab__nav">
-                <button class="tab__nav_states">States</button>
-                <button class="tab__nav_states_timeseries">Cases</button>
-                <button class="tab__nav_states_new_timeseries">New Cases</button>
-                <button class="tab__nav_states_counties">Counties</button>
+                <button id="tab__nav_states">States</button>
+                <button id="tab__nav_cases">Cases</button>
+                <button id="tab__nav_cases_new">New Cases</button>
+                <button id="tab__nav_counties">Counties</button>
             </div>
             <div class="tabs">
-                <div id="tab__states" class="tab__content tab__states">
+                <div id="tab__states" class="tab__content">
                     <div class="chart__container ">
-                        <div class="chart chart__confirmed">
+                        <div class="chart">
                             <canvas class="bchart__canvas_confirmed"></canvas>
                         </div>
-                        <div class="chart chart__deaths">
+                        <div class="chart">
                             <canvas class="bchart__canvas_deaths"></canvas>
                         </div>
                     </div>
                 </div>
-                <div id="tab__cases" class="tab__content tab__cases">
+                <div id="tab__cases" class="tab__content">
                     <div class="chart__container ">
-                        <div class="chart chart__confirmed">
+                        <div class="chart">
                             <canvas class="lchart__canvas_confirmed"></canvas>
                         </div>
-                        <div class="chart chart__deaths">
+                        <div class="chart">
                             <canvas class="lchart__canvas_deaths"></canvas>
                         </div>
                     </div>
                 </div>
-                <div id="tab__new_cases" class="tab__content tab__new_cases">
+                <div id="tab__new_cases" class="tab__content">
                     <div class="chart__container ">
-                        <div class="chart chart__confirmed">
+                        <div class="chart">
                             <canvas class="lchart__canvas_confirmed_new"></canvas>
                         </div>
-                        <div class="chart chart__deaths">
+                        <div class="chart">
                             <canvas class="lchart__canvas_deaths_new"></canvas>
                         </div>
                     </div>
                 </div>
-                <div id="tab__counties" class="tab__content tab__counties">
+                <div id="tab__counties" class="tab__content">
                     <div class="chart__container ">
-                        <div class="chart chart__confirmed">
+                        <div class="chart">
                             <canvas class="pchart__canvas_confirmed"></canvas>
                         </div>
-                        <div class="chart chart__deaths">
+                        <div class="chart">
                             <canvas class="pchart__canvas_deaths"></canvas>
                         </div>
                     </div>

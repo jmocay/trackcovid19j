@@ -46,36 +46,36 @@ class Tabs {
         }
         
         this.selectTab('tab__states')
+        document.querySelector('#tab__nav_states').classList.add('active')
 
-        document.querySelector('.tab__nav_states').addEventListener(
-            'click', this.selectTab.bind(this, 'tab__states')
-        )
-        document.querySelector('.tab__nav_states_timeseries').addEventListener(
-            'click', this.selectTab.bind(this, 'tab__cases')
-        )
-        document.querySelector('.tab__nav_states_new_timeseries').addEventListener(
-            'click', this.selectTab.bind(this, 'tab__new_cases')
-        )
-        document.querySelector('.tab__nav_states_counties').addEventListener(
-            'click', this.selectTab.bind(this, 'tab__counties')
-        )
+        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
+            button.addEventListener('click', this.tabNavClicked)
+        }
     }
 
-    selectTab = (tabId, evt) => {
+    tabNavClicked = (evt) => {
+        let btnTabs = {
+            tab__nav_states: 'tab__states',
+            tab__nav_cases: 'tab__cases',
+            tab__nav_cases_new: 'tab__new_cases',
+            tab__nav_counties: 'tab__counties',
+        }
+
+        this.selectTab(btnTabs[evt.target.id])
+
+        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
+            button.classList.remove('active')
+        }
+        evt.target.classList.add('active')
+    }
+
+    selectTab = (tabId) => {
         for (let tab_content of document.querySelectorAll('.tab__content')) {
             tab_content.style.display = 'none'
-            let tab = document.querySelector(`#${tabId}`)
-            tab.style.display = 'grid'
-            tab.style.gridArea = 'a'
         }
-        if (evt) {
-            for (let button of document.querySelector(".tab__nav").querySelectorAll("button")) {
-                button.classList.remove(".active")
-            }
-            if (evt) {
-                evt.target.classList.add(".active")
-            }
-        }
+        let tab = document.querySelector(`#${tabId}`)
+        tab.style.display = 'grid'
+        tab.style.gridArea = 'a'
     }
 }
 
@@ -196,6 +196,8 @@ class BarChart {
                     lineChart.update(state)
                     polarChart.update(state)
                     tabs.selectTab('tab__cases')
+                    document.querySelector('#tab__nav_states').classList.remove('active')
+                    document.querySelector('#tab__nav_cases').classList.add('active')
                 }
             })
         })
