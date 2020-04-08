@@ -47,18 +47,9 @@ class Tabs {
         
         this.selectTab('tab__states')
 
-        document.querySelector('#tab__nav_states').addEventListener(
-            'click', this.tabNavClicked
-        )
-        document.querySelector('#tab__nav_cases').addEventListener(
-            'click', this.tabNavClicked
-        )
-        document.querySelector('#tab__nav_cases_new').addEventListener(
-            'click', this.tabNavClicked
-        )
-        document.querySelector('#tab__nav_counties').addEventListener(
-            'click', this.tabNavClicked
-        )
+        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
+            button.addEventListener('click', this.tabNavClicked)
+        }
     }
 
     tabNavClicked = (evt) => {
