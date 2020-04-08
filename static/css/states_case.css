@@ -1,59 +1,145 @@
-body {
+.body {
+      font-family: sans-serif;
+}
+
+.container {
   background-image: linear-gradient(-90deg, yellow, rgb(8, 94, 94));
-  font-family: sans-serif;
-}
-
-.top__nav {
-  background: rgb(8, 94, 94);
-  margin: 0;
-  position: fixed;
-  top: 0;
-  display: flex;
-  flex-direction: row;
-  color: white;
-  width: 100%;
-  height: 40px;
-}
-
-.top__nav h1 {
-  font-size: 2rem;
-  font-weight: bold;
-  align-self: center;
-  text-align: left;
-  flex-grow: 1;
-}
-
-.top__nav a {
-  float: right;
-  text-decoration: none;
-  display: block;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 8px 16px;
-  font-size: 18px;
-  flex-grow: none;
-}
-
-.top__nav a:hover {
-  background: #ddd;
-  color: black;
-}
-
-.main {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(640px, 1fr));
-  gap: 1rem;
-  margin-top: calc(40px + 1.5rem);
+  grid-template-columns: 1fr;
+  gap: .5rem;
 }
 
-.bchart__confirmed,
-.bchart__deaths,
-.lchart__confirmed,
-.lchart__deaths,
-.lchart__confirmed_new,
-.lchart__deaths_new,
-.pchart__confirmed,
-.pchart__deaths {
-  background-color: lightgoldenrodyellow;
+header {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+}
+
+.logo {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-column: span 1;
+  background: rgb(8, 94, 94);
+}
+
+.title {
+  display: grid;
+  height: 40px;
+  grid-column: span 7;
+  color: white;
+  background: rgb(8, 94, 94);
+  justify-content: center;
+  align-items: center;
+}
+
+.title>h1 {
+  font-family: sans-serif;
+  display: inline-block;
+  margin: 0px 0px 5px 0px;
+  padding: 5px 0px 0px 0px;
+  color: white;
+  overflow: hidden;
+}
+
+.nav {
+  display: grid;
+  grid-column: span 2;
+  background: rgb(8, 94, 94);
+  justify-content: right;
+  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.nav>button {
+  font-size: 1.2rem;
+  font-family: sans-serif;
+  display: inline-block;
+  color: white;
+  background: transparent;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.nav>button:hover {
+  color: black;
+  background: lightgray;
+}
+
+.content {
+  background-image: linear-gradient(-90deg, yellow, rgb(8, 94, 94));
+  grid-column: 1 / -1;
+  display: grid;
+  height: 640px;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.tab__nav {
+  height: 64px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  align-items: center;
+  grid-row: span 1;
+}
+
+.tab__nav>button {
+  grid-column: span 1;
+  font-family: sans-serif;
+  font-size: 1rem;
+  color: white;
+  background: lightslategray;
+  border-radius: 20px 20px 0 0;
+  text-align: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.tab__nav>button:hover,
+.tab__nav>button:active {
+  color: black;
+  background: rgb(29, 135, 206);
+}
+
+.tabs {
+  grid-row: span 9;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-areas: "a a a a"
+    "a a a a"
+    "a a a a"
+    "a a a a";
+  background: rgb(29, 135, 206);
+}
+
+.tab__content {
+  display: none;
+}
+
+.tab__states,
+.tab__cases,
+.tab__new_cases,
+.tab__counties {
+  background: transparent;
+}
+
+.chart__container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.chart__confirmed,
+.chart__deaths {
+  background: lightgoldenrodyellow;
+  width: 100%;
+  height: 80%;
   border-radius: 5px;
 }
