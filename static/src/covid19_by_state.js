@@ -2,10 +2,14 @@ var navBar
 var barChart
 var lineChart
 var polarChart
+var tabs;
 
 window.addEventListener('load', async ()=> {
     navBar = new NavBar(appConfig)
     navBar.initialize()
+
+    tabs = new Tabs(appConfig)
+    tabs.initialize()
 
     barChart = new BarChart(appConfig)
     barChart.initialize()
@@ -24,8 +28,54 @@ class NavBar {
     }
 
     initialize = () => {
-        let navCovid19 = document.querySelector('.nav__covid19')
-        navCovid19.href = encodeURI(`${this.urlPrefix}/`)
+        document.querySelector('#nav__home').addEventListener('click', () => {
+            window.location = this.urlPrefix
+        })
+    }
+}
+
+class Tabs {
+    constructor(cfg) {
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
+    }
+
+    initialize = () => {
+        let tabs = {}
+        for (let tab of document.querySelectorAll('.tab__content')) {
+            tabs[tab.id] = tab;
+        }
+        
+        this.selectTab('tab__states')
+
+        document.querySelector('.tab__nav_states').addEventListener(
+            'click', this.selectTab.bind(this, 'tab__states')
+        )
+        document.querySelector('.tab__nav_states_timeseries').addEventListener(
+            'click', this.selectTab.bind(this, 'tab__cases')
+        )
+        document.querySelector('.tab__nav_states_new_timeseries').addEventListener(
+            'click', this.selectTab.bind(this, 'tab__new_cases')
+        )
+        document.querySelector('.tab__nav_states_counties').addEventListener(
+            'click', this.selectTab.bind(this, 'tab__counties')
+        )
+    }
+
+    selectTab = (tabId, evt) => {
+        for (let tab_content of document.querySelectorAll('.tab__content')) {
+            tab_content.style.display = 'none'
+            let tab = document.querySelector(`#${tabId}`)
+            tab.style.display = 'grid'
+            tab.style.gridArea = 'a'
+        }
+        if (evt) {
+            for (let button of document.querySelector(".tab__nav").querySelectorAll("button")) {
+                button.classList.remove(".active")
+            }
+            if (evt) {
+                evt.target.classList.add(".active")
+            }
+        }
     }
 }
 
@@ -145,6 +195,7 @@ class BarChart {
                     let state = lastTooltipActive._model.label
                     lineChart.update(state)
                     polarChart.update(state)
+                    tabs.selectTab('tab__cases')
                 }
             })
         })
