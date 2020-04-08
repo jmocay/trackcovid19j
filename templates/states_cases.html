@@ -1,55 +1,86 @@
-<html>
+<!DOCTYPE html>
 
-    <head>
-        <title>COVID-19 US Cases by State</title>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-        <style>
-            @import url('static/css/states_case.css');
-        </style>
-    </head>
+<head>
+    <meta charset="utf-8">
 
-    <body>
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <style>
+        @import url('static/css/states_case.css');
+    </style>
+</head>
 
-        <div class="top__nav">
-            <h1>COVID-19 US Cases by State<h1></h1>
-            <a class="nav__covid19"">&#9782; Home</a>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"></div>
+
+            <div class="title">
+                <h1>COVID-19 US Cases by State</h1>
+            </div>
+
+            <div class="nav">
+                <div></div>
+                <div></div>
+                <button id="nav__home">&#9782; Home</button>
+            </div>
+        </header>
+        <div class="content">
+            <div class="tab__nav">
+                <button class="tab__nav_states">States</button>
+                <button class="tab__nav_states_timeseries">Cases</button>
+                <button class="tab__nav_states_new_timeseries">New Cases</button>
+                <button class="tab__nav_states_counties">Counties</button>
+            </div>
+            <div class="tabs">
+                <div id="tab__states" class="tab__content tab__states">
+                    <div class="chart__container ">
+                        <div class="chart chart__confirmed">
+                            <canvas class="bchart__canvas_confirmed"></canvas>
+                        </div>
+                        <div class="chart chart__deaths">
+                            <canvas class="bchart__canvas_deaths"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab__cases" class="tab__content tab__cases">
+                    <div class="chart__container ">
+                        <div class="chart chart__confirmed">
+                            <canvas class="lchart__canvas_confirmed"></canvas>
+                        </div>
+                        <div class="chart chart__deaths">
+                            <canvas class="lchart__canvas_deaths"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab__new_cases" class="tab__content tab__new_cases">
+                    <div class="chart__container ">
+                        <div class="chart chart__confirmed">
+                            <canvas class="lchart__canvas_confirmed_new"></canvas>
+                        </div>
+                        <div class="chart chart__deaths">
+                            <canvas class="lchart__canvas_deaths_new"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab__counties" class="tab__content tab__counties">
+                    <div class="chart__container ">
+                        <div class="chart chart__confirmed">
+                            <canvas class="pchart__canvas_confirmed"></canvas>
+                        </div>
+                        <div class="chart chart__deaths">
+                            <canvas class="pchart__canvas_deaths"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="main">
-            <div class="bchart__confirmed">
-                <canvas class="bchart__canvas_confirmed"></canvas>
-            </div>
-            <div class="bchart__deaths">
-                <canvas class="bchart__canvas_deaths"></canvas>
-            </div>
-
-            <div class="lchart__confirmed">
-                <canvas class="lchart__canvas_confirmed"></canvas>
-            </div>
-
-            <div class="lchart__deaths">
-                <canvas class="lchart__canvas_deaths"></canvas>
-            </div>
-
-            <div class="lchart__confirmed_new">
-                <canvas class="lchart__canvas_confirmed_new"></canvas>
-            </div>
-
-            <div class="lchart__deaths_new">
-                <canvas class="lchart__canvas_deaths_new"></canvas>
-            </div>
-
-            <div class="pchart__confirmed">
-                <canvas class="pchart__canvas_confirmed"></canvas>
-            </div>
-
-            <div class="pchart__deaths">
-                <canvas class="pchart__canvas_deaths"></canvas>
-            </div>
-        </div>
-
-        <script src="static/src/config.js"></script>
-        <script src="static/src/covid19_by_state.js"></script>
-    </body>
+    <script src="static/src/config.js"></script>
+    <script src="static/src/covid19_by_state.js"></script>
+</body>
 
 </html>
