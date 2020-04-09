@@ -198,7 +198,7 @@ class ConfirmedCasesMap {
         });
 
         mapData['lat'].forEach((lat, i) => {
-            if (mapData['count'][i] >= 20) {
+            if (mapData['confirmed'][i] >= 20) {
                 let layer = L.marker(
                     [
                         lat,
@@ -209,7 +209,8 @@ class ConfirmedCasesMap {
 
                 layer.bindTooltip(`
                         Location: <b>${mapData['location'][i]}</b><br>
-                        Case(s) confirmed: <b>${mapData['count'][i].toLocaleString()}</b>
+                        Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
+                        Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
                     `).openTooltip()
                 layer.closeTooltip()
             }
