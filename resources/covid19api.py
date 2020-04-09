@@ -1,15 +1,17 @@
 import pandas as pd
 from flask_restful import Resource
 
-class ConfirmedCasesMap(Resource):
+class Covid19CasesMap(Resource):
     def get(self):
-        df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Combined_Key', 'Lat', 'Long_'])['Confirmed'].sum())
+        df = pd.DataFrame(pd.read_csv('data/daily_report.csv').groupby(['Combined_Key', 'Lat', 'Long_'])[['Confirmed','Deaths','Recovered']].sum())
         cases = df[ df['Confirmed'] > 0 ]
         return {
             "location": [str(idx[0]) for idx in cases.index],
             "lat": [float(idx[1]) for idx in cases.index],
             "lon": [float(idx[2]) for idx in cases.index],
-            "count": [int(cnt) for cnt in cases['Confirmed']],
+            "confirmed": [int(cnt) for cnt in cases['Confirmed']],
+            "deaths": [int(cnt) for cnt in cases['Deaths']],
+            "recovered": [int(cnt) for cnt in cases['Recovered']],
         }
 
 class GlobalCasesTimeSeries(Resource):
