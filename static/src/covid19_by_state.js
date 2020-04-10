@@ -19,6 +19,10 @@ window.addEventListener('load', async ()=> {
 
     polarChart = new PolarChart(appConfig)
     polarChart.initialize()
+
+    let defaultState = 'New York'
+    lineChart.update(defaultState)
+    polarChart.update(defaultState)
 })
 
 
@@ -40,14 +44,8 @@ class Tabs {
     }
 
     initialize = () => {
-        let tabs = {}
-        for (let tab of document.querySelectorAll('.tab__content')) {
-            tabs[tab.id] = tab;
-        }
-        
         this.selectTab('tab__states')
         document.querySelector('#tab__nav_states').classList.add('active')
-
         for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
             button.addEventListener('click', this.tabNavClicked)
         }
@@ -212,8 +210,6 @@ class LineChart {
 
     initialize = async () => {
         this.setup()
-        let defaultState = 'New York'
-        this.update(defaultState)
     }
 
     getData = async (state, chartLine) => {
@@ -320,7 +316,7 @@ class LineChart {
             });
         }
 
-        let chartSettings = [
+        this.chartSettings = [
             {
                 canvasClass: 'lchart__canvas_confirmed',
                 title: 'Confirmed Cases',
@@ -392,11 +388,8 @@ class LineChart {
                 ]
             }
         ]
-        this.chartSettings = chartSettings.map((chartSetting) => {
-            return {
-                ...chartSetting,
-                chart: createLineChart(chartSetting)
-            }
+        this.chartSettings.forEach((chartSetting) => {
+            chartSetting['chart'] = createLineChart(chartSetting)
         })
     }
 }
@@ -409,8 +402,6 @@ class PolarChart {
 
     initialize = () => {
         this.setup()
-        let defaultState = 'New York'
-        this.update(defaultState)
     }
 
     getData = async (state, chartSetting) => {
@@ -485,7 +476,7 @@ class PolarChart {
             });
         }
 
-        let chartSettings = [
+        this.chartSettings = [
             {
                 canvasClass: 'pchart__canvas_confirmed',
                 endpoint: 'us_county_confirmed',
@@ -501,11 +492,8 @@ class PolarChart {
                 ys: 'count',
             },
         ]
-        this.chartSettings = chartSettings.map((chartSetting) => {
-            return {
-                ...chartSetting,
-                chart: createPolarChart(chartSetting)
-            }
+        this.chartSettings.forEach((chartSetting) => {
+            chartSetting['chart'] = createPolarChart(chartSetting)
         })
     }
 }
