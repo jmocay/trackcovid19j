@@ -139,3 +139,18 @@ header {
   height: 80%;
   border-radius: 5px;
 }
+
+.map__container {
+  display: flex;
+  flex-direction: row;
+}
+
+.map {
+  display: flex;
+  flex-grow: row;
+}
+
+.map__canvas {
+  width: 640px;
+  height: 560px;
+}

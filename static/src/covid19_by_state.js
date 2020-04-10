@@ -3,6 +3,7 @@ var barChart
 var lineChart
 var polarChart
 var tabs;
+var stateMap;
 
 window.addEventListener('load', async ()=> {
     navBar = new NavBar(appConfig)
@@ -19,6 +20,14 @@ window.addEventListener('load', async ()=> {
 
     polarChart = new PolarChart(appConfig)
     polarChart.initialize()
+
+    stateMap = new StateMap(appConfig)
+    stateMap.initialize()
+
+    let defaultState = 'New York'
+    lineChart.update(defaultState)
+    polarChart.update(defaultState)
+    stateMap.update(defaultState)
 })
 
 
@@ -40,14 +49,8 @@ class Tabs {
     }
 
     initialize = () => {
-        let tabs = {}
-        for (let tab of document.querySelectorAll('.tab__content')) {
-            tabs[tab.id] = tab;
-        }
-        
         this.selectTab('tab__states')
         document.querySelector('#tab__nav_states').classList.add('active')
-
         for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
             button.addEventListener('click', this.tabNavClicked)
         }
@@ -59,10 +62,9 @@ class Tabs {
             tab__nav_cases: 'tab__cases',
             tab__nav_cases_new: 'tab__new_cases',
             tab__nav_counties: 'tab__counties',
+            tab__nav_map: 'tab__map',
         }
-
         this.selectTab(btnTabs[evt.target.id])
-
         for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
             button.classList.remove('active')
         }
@@ -195,6 +197,7 @@ class BarChart {
                     let state = lastTooltipActive._model.label
                     lineChart.update(state)
                     polarChart.update(state)
+                    map.update(state)
                     tabs.selectTab('tab__cases')
                     document.querySelector('#tab__nav_states').classList.remove('active')
                     document.querySelector('#tab__nav_cases').classList.add('active')
@@ -212,8 +215,6 @@ class LineChart {
 
     initialize = async () => {
         this.setup()
-        let defaultState = 'New York'
-        this.update(defaultState)
     }
 
     getData = async (state, chartLine) => {
@@ -230,7 +231,7 @@ class LineChart {
             return chartData;
         }
         catch (err) {
-            console.log(err)
+            console.error(err)
         }
     }
 
@@ -320,7 +321,7 @@ class LineChart {
             });
         }
 
-        let chartSettings = [
+        this.chartSettings = [
             {
                 canvasClass: 'lchart__canvas_confirmed',
                 title: 'Confirmed Cases',
@@ -392,11 +393,8 @@ class LineChart {
                 ]
             }
         ]
-        this.chartSettings = chartSettings.map((chartSetting) => {
-            return {
-                ...chartSetting,
-                chart: createLineChart(chartSetting)
-            }
+        this.chartSettings.forEach((chartSetting) => {
+            chartSetting['chart'] = createLineChart(chartSetting)
         })
     }
 }
@@ -409,8 +407,6 @@ class PolarChart {
 
     initialize = () => {
         this.setup()
-        let defaultState = 'New York'
-        this.update(defaultState)
     }
 
     getData = async (state, chartSetting) => {
@@ -426,11 +422,11 @@ class PolarChart {
             return chartData;
         }
         catch (err) {
-            console.log(err)
+            console.error(err)
         }
     }
 
-    show = (chartData, state, chartSetting) => {
+    show = (chartData, chartSetting) => {
         const selectColor = (i) => {
             let colorWheel = [
                 'rgba(255, 0, 255, 1)',
@@ -465,9 +461,10 @@ class PolarChart {
     }
 
     update = (state) => {
+        this.selectedState = state
         this.chartSettings.forEach(async (chartSetting) => {
             let chartData = await this.getData(state, chartSetting)
-            this.show(chartData, state, chartSetting)
+            this.show(chartData, chartSetting)
         })
     }
 
@@ -481,11 +478,19 @@ class PolarChart {
                     animation: {
                         duration: 0,
                     },
-                },
+                    events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+                    onClick: (evt, data) => {
+                        if (data[0]) {
+                            let state = polarChart.selectedState
+                            let county = data[0]._model.label.replace(/ - Confirmed| - Deaths/gi, '')
+                            stateMap.update(state, county)
+                        }
+                    },
+                },                
             });
         }
 
-        let chartSettings = [
+        this.chartSettings = [
             {
                 canvasClass: 'pchart__canvas_confirmed',
                 endpoint: 'us_county_confirmed',
@@ -501,10 +506,78 @@ class PolarChart {
                 ys: 'count',
             },
         ]
-        this.chartSettings = chartSettings.map((chartSetting) => {
-            return {
-                ...chartSetting,
-                chart: createPolarChart(chartSetting)
+        this.chartSettings.forEach((chartSetting) => {
+            chartSetting['chart'] = createPolarChart(chartSetting)
+        })
+    }
+}
+
+class StateMap {
+    constructor(cfg) {
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
+    }
+
+    initialize = () => {
+        let mapDiv = document.querySelector('.map')
+        let map = L.map(mapDiv)
+
+        // map.createPane('labels')
+        // map.getPane('labels').style.zIndex = 650;
+
+        map.setView([0, 0], 2)
+        let attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        let tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        let tileLayer = L.tileLayer(
+            tileUrl, { attribution }
+        )
+        tileLayer.addTo(map)
+        this.map = map
+    }
+
+    update = async (state, county) => {
+        console.log('map.update: ', {state, county})
+        let mapData = await this.getData()
+        this.show(mapData)
+    }
+
+    getData = async (state) => {
+        let url = encodeURI(`${this.urlPrefix}/global_confirmed_cases`)
+        let res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        let mapData = await res.json()
+        return mapData
+    }
+
+    show = (mapData) => {
+        console.log(mapData)
+
+        let ncov19Icon = L.icon({
+            iconUrl: 'static/images/corona-red.ico',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [-5, -5],
+        });
+
+        mapData['lat'].forEach((lat, i) => {
+            if (mapData['confirmed'][i] >= 20) {
+                let layer = L.marker(
+                    [
+                        lat,
+                        mapData['lon'][i]
+                    ],
+                    { icon: ncov19Icon }
+                ).addTo(this.map)
+
+                layer.bindTooltip(`
+                        Location: <b>${mapData['location'][i]}</b><br>
+                        Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
+                        Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
+                    `).openTooltip()
+                layer.closeTooltip()
             }
         })
     }
