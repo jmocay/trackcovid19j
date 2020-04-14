@@ -219,3 +219,29 @@ class USCountiesDeaths(Resource):
             "counties": [ str(county) for county in df['Counties'] ],
             "count": [ int(cnt) for cnt in df['Deaths'] ]
         }
+
+class StateLatLon(Resource):
+    def get(self, state):
+        df = pd.read_csv('data/time_series_covid19_confirmed_US.csv',
+                        usecols=['Province_State','Country_Region','Lat','Long_'])
+        df = df[ df['Country_Region'] == 'US' ]
+        df = df[ df['Province_State'] == state ]
+        df = df[ df['Lat'] != 0 ]
+        df = df[['Lat', 'Long_']].mean()
+        return {
+            "lat": float(df['Lat']),
+            "lon": float(df['Long_']),
+        }
+
+class CountyLatLon(Resource):
+    def get(self, state, county):
+        df = pd.read_csv('data/time_series_covid19_confirmed_US.csv',
+                        usecols=['Admin2','Province_State','Country_Region','Lat','Long_'])
+        df = df[ df['Country_Region'] == 'US' ]
+        df = df[ df['Province_State'] == state ]
+        df = df[ df['Admin2'] == county ]
+        df = df[ df['Lat'] != 0 ]
+        return {
+            "lat": float(df['Lat']),
+            "lon": float(df['Long_']),
+        }

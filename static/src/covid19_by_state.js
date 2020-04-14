@@ -3,6 +3,7 @@ var barChart
 var lineChart
 var polarChart
 var tabs;
+var stateMap;
 
 window.addEventListener('load', async ()=> {
     navBar = new NavBar(appConfig)
@@ -20,9 +21,13 @@ window.addEventListener('load', async ()=> {
     polarChart = new PolarChart(appConfig)
     polarChart.initialize()
 
+    stateMap = new StateMap(appConfig)
+    stateMap.initialize()
+
     let defaultState = 'New York'
     lineChart.update(defaultState)
     polarChart.update(defaultState)
+    stateMap.update(defaultState)
 })
 
 
@@ -57,10 +62,9 @@ class Tabs {
             tab__nav_cases: 'tab__cases',
             tab__nav_cases_new: 'tab__new_cases',
             tab__nav_counties: 'tab__counties',
+            tab__nav_map: 'tab__map',
         }
-
         this.selectTab(btnTabs[evt.target.id])
-
         for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
             button.classList.remove('active')
         }
@@ -193,6 +197,7 @@ class BarChart {
                     let state = lastTooltipActive._model.label
                     lineChart.update(state)
                     polarChart.update(state)
+                    stateMap.update(state)
                     tabs.selectTab('tab__cases')
                     document.querySelector('#tab__nav_states').classList.remove('active')
                     document.querySelector('#tab__nav_cases').classList.add('active')
@@ -226,7 +231,7 @@ class LineChart {
             return chartData;
         }
         catch (err) {
-            console.log(err)
+            console.error(err)
         }
     }
 
@@ -417,11 +422,11 @@ class PolarChart {
             return chartData;
         }
         catch (err) {
-            console.log(err)
+            console.error(err)
         }
     }
 
-    show = (chartData, state, chartSetting) => {
+    show = (chartData, chartSetting) => {
         const selectColor = (i) => {
             let colorWheel = [
                 'rgba(255, 0, 255, 1)',
@@ -456,9 +461,10 @@ class PolarChart {
     }
 
     update = (state) => {
+        this.selectedState = state
         this.chartSettings.forEach(async (chartSetting) => {
             let chartData = await this.getData(state, chartSetting)
-            this.show(chartData, state, chartSetting)
+            this.show(chartData, chartSetting)
         })
     }
 
@@ -472,6 +478,22 @@ class PolarChart {
                     animation: {
                         duration: 0,
                     },
+                    events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+                    onClick: (evt, data) => {
+                        if (data[0]) {
+                            let state = polarChart.selectedState
+                            let county = data[0]._model.label.replace(/ - Confirmed| - Deaths/gi, '')
+                            stateMap.update(state, county)
+                            tabs.selectTab('tab__map')
+                            document.querySelector('#tab__nav_counties').classList.remove('active')
+                            document.querySelector('#tab__nav_map').classList.add('active')
+                        }
+                    },
+                    hover: {
+                        onHover: (evt) => {
+                            evt.target.style.cursor = 'pointer'
+                        }
+                    }
                 },
             });
         }
@@ -495,5 +517,42 @@ class PolarChart {
         this.chartSettings.forEach((chartSetting) => {
             chartSetting['chart'] = createPolarChart(chartSetting)
         })
+    }
+}
+
+class StateMap {
+    constructor(cfg) {
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
+    }
+
+    initialize = () => {}
+
+    getData = async (state, county) => {
+        try {
+            let url = encodeURI(`${this.urlPrefix}/state_latlon/${state}`)
+            if (county) {
+                url = encodeURI(`${this.urlPrefix}/county_latlon/${state}/${county}`)
+            }
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let latLon = await res.json()
+            return latLon   
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    update = async (state, county) => {
+        let latLon = await this.getData(state, county)
+        let zoom = 6
+        if (county) {
+            zoom = 10
+        }
+        let url = `https://maps.google.com?q=${latLon.lat},${latLon.lon}&z=${zoom}&output=embed`
+        document.querySelector('.map__google').setAttribute('src', url)
     }
 }
