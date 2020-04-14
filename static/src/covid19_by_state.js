@@ -21,13 +21,9 @@ window.addEventListener('load', async ()=> {
     polarChart = new PolarChart(appConfig)
     polarChart.initialize()
 
-    stateMap = new StateMap(appConfig)
-    stateMap.initialize()
-
     let defaultState = 'New York'
     lineChart.update(defaultState)
     polarChart.update(defaultState)
-    stateMap.update(defaultState)
 })
 
 
@@ -508,77 +504,6 @@ class PolarChart {
         ]
         this.chartSettings.forEach((chartSetting) => {
             chartSetting['chart'] = createPolarChart(chartSetting)
-        })
-    }
-}
-
-class StateMap {
-    constructor(cfg) {
-        this.urlPrefix = cfg.serverUrl[appConfig.env]
-    }
-
-    initialize = () => {
-        let mapDiv = document.querySelector('.map')
-        let map = L.map(mapDiv)
-
-        // map.createPane('labels')
-        // map.getPane('labels').style.zIndex = 650;
-
-        map.setView([0, 0], 2)
-        let attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        let tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        let tileLayer = L.tileLayer(
-            tileUrl, { attribution }
-        )
-        tileLayer.addTo(map)
-        this.map = map
-    }
-
-    update = async (state, county) => {
-        console.log('map.update: ', {state, county})
-        let mapData = await this.getData()
-        this.show(mapData)
-    }
-
-    getData = async (state) => {
-        let url = encodeURI(`${this.urlPrefix}/global_confirmed_cases`)
-        let res = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        let mapData = await res.json()
-        return mapData
-    }
-
-    show = (mapData) => {
-        console.log(mapData)
-
-        let ncov19Icon = L.icon({
-            iconUrl: 'static/images/corona-red.ico',
-            iconSize: [32, 32],
-            iconAnchor: [16, 16],
-            popupAnchor: [-5, -5],
-        });
-
-        mapData['lat'].forEach((lat, i) => {
-            if (mapData['confirmed'][i] >= 20) {
-                let layer = L.marker(
-                    [
-                        lat,
-                        mapData['lon'][i]
-                    ],
-                    { icon: ncov19Icon }
-                ).addTo(this.map)
-
-                layer.bindTooltip(`
-                        Location: <b>${mapData['location'][i]}</b><br>
-                        Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
-                        Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
-                    `).openTooltip()
-                layer.closeTooltip()
-            }
         })
     }
 }
