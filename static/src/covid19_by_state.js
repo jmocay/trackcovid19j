@@ -21,9 +21,13 @@ window.addEventListener('load', async ()=> {
     polarChart = new PolarChart(appConfig)
     polarChart.initialize()
 
+    stateMap = new StateMap(appConfig)
+    stateMap.initialize()
+
     let defaultState = 'New York'
     lineChart.update(defaultState)
     polarChart.update(defaultState)
+    stateMap.update(defaultState)
 })
 
 
@@ -193,7 +197,7 @@ class BarChart {
                     let state = lastTooltipActive._model.label
                     lineChart.update(state)
                     polarChart.update(state)
-                    map.update(state)
+                    stateMap.update(state)
                     tabs.selectTab('tab__cases')
                     document.querySelector('#tab__nav_states').classList.remove('active')
                     document.querySelector('#tab__nav_cases').classList.add('active')
@@ -480,9 +484,17 @@ class PolarChart {
                             let state = polarChart.selectedState
                             let county = data[0]._model.label.replace(/ - Confirmed| - Deaths/gi, '')
                             stateMap.update(state, county)
+                            tabs.selectTab('tab__map')
+                            document.querySelector('#tab__nav_counties').classList.remove('active')
+                            document.querySelector('#tab__nav_map').classList.add('active')
                         }
                     },
-                },                
+                    hover: {
+                        onHover: (evt) => {
+                            evt.target.style.cursor = 'pointer'
+                        }
+                    }
+                },
             });
         }
 
@@ -505,5 +517,42 @@ class PolarChart {
         this.chartSettings.forEach((chartSetting) => {
             chartSetting['chart'] = createPolarChart(chartSetting)
         })
+    }
+}
+
+class StateMap {
+    constructor(cfg) {
+        this.urlPrefix = cfg.serverUrl[appConfig.env]
+    }
+
+    initialize = () => {}
+
+    getData = async (state, county) => {
+        try {
+            let url = encodeURI(`${this.urlPrefix}/state_latlon/${state}`)
+            if (county) {
+                url = encodeURI(`${this.urlPrefix}/county_latlon/${state}/${county}`)
+            }
+            let res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            let latLon = await res.json()
+            return latLon   
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    update = async (state, county) => {
+        let latLon = await this.getData(state, county)
+        let zoom = 6
+        if (county) {
+            zoom = 10
+        }
+        let url = `https://maps.google.com?q=${latLon.lat},${latLon.lon}&z=${zoom}&output=embed`
+        document.querySelector('.map__google').setAttribute('src', url)
     }
 }

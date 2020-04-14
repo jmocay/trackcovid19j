@@ -145,6 +145,7 @@ header {
   grid-template-columns: 1fr;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 }
 
 .map__county {
@@ -153,4 +154,12 @@ header {
   background: black;
   height: 80%;
   width: 100%;
+}
+
+.map__google {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  scroll-behavior: unset;
+  margin: 0;
 }
