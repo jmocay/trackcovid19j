@@ -140,9 +140,9 @@ class BarChart {
                         xAxes: [{
                             ticks: {
                                 autoSkip: false,
-                                minRotation: 90,
-                                maxRotation: 90,
-                            }
+                                minRotation: 60,
+                                maxRotation: 60,
+                            },
                         }],
                         yAxes: [{
                             ticks: {
