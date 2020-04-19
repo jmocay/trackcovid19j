@@ -46,38 +46,39 @@ class NavBar {
 class Tabs {
     constructor(cfg) {
         this.urlPrefix = cfg.serverUrl[appConfig.env]
-    }
-
-    initialize = () => {
-        this.selectTab('tab__states')
-        document.querySelector('#tab__nav_states').classList.add('active')
-        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
-            button.addEventListener('click', this.tabNavClicked)
-        }
-    }
-
-    tabNavClicked = (evt) => {
-        let btnTabs = {
+        this.btnTabs = {
             tab__nav_states: 'tab__states',
             tab__nav_cases: 'tab__cases',
             tab__nav_cases_new: 'tab__new_cases',
             tab__nav_counties: 'tab__counties',
             tab__nav_map: 'tab__map',
-        }
-        this.selectTab(btnTabs[evt.target.id])
-        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
-            button.classList.remove('active')
-        }
-        evt.target.classList.add('active')
+        } 
     }
 
-    selectTab = (tabId) => {
+    initialize = () => {
+        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
+            button.addEventListener('click', this.tabNavClicked)
+        }
+        this.selectTab('tab__nav_states')
+    }
+
+    tabNavClicked = (evt) => {
+        this.selectTab(evt.target.id)
+    }
+
+    selectTab = (btnId) => {
+        // select tab
         for (let tab_content of document.querySelectorAll('.tab__content')) {
             tab_content.style.display = 'none'
         }
-        let tab = document.querySelector(`#${tabId}`)
+        let tab = document.querySelector(`#${this.btnTabs[btnId]}`)
         tab.style.display = 'grid'
         tab.style.gridArea = 'a'
+        // activate button for tab
+        for (let button of document.querySelector('.tab__nav').querySelectorAll('button')) {
+            button.classList.remove('active')
+        }
+        document.querySelector(`#${btnId}`).classList.add('active')
     }
 }
 
@@ -198,9 +199,7 @@ class BarChart {
                     lineChart.update(state)
                     polarChart.update(state)
                     stateMap.update(state)
-                    tabs.selectTab('tab__cases')
-                    document.querySelector('#tab__nav_states').classList.remove('active')
-                    document.querySelector('#tab__nav_cases').classList.add('active')
+                    tabs.selectTab('tab__nav_cases')
                 }
             })
         })
@@ -484,9 +483,7 @@ class PolarChart {
                             let state = polarChart.selectedState
                             let county = data[0]._model.label.replace(/ - Confirmed| - Deaths/gi, '')
                             stateMap.update(state, county)
-                            tabs.selectTab('tab__map')
-                            document.querySelector('#tab__nav_counties').classList.remove('active')
-                            document.querySelector('#tab__nav_map').classList.add('active')
+                            tabs.selectTab('tab__nav_map')
                         }
                     },
                     hover: {
