@@ -79,6 +79,9 @@ class Tabs {
             button.classList.remove('active')
         }
         document.querySelector(`#${btnId}`).classList.add('active')
+        if (btnId === 'tab__nav_map') {
+            stateMap.updateView()
+        }
     }
 }
 
@@ -543,10 +546,16 @@ class StateMap {
         }
     }
 
-    update = async (state, county) => {
-        let latLon = await this.getData(state, county)
+    update = (state, county) => {
+        this.state = state
+        this.county = county
+        this.updateView(state, county)
+    }
+
+    updateView = async () => {
+        let latLon = await this.getData(this.state, this.county)
         let zoom = 6
-        if (county) {
+        if (this.county) {
             zoom = 10
         }
         let url = `https://maps.google.com?q=${latLon.lat},${latLon.lon}&z=${zoom}&output=embed`
