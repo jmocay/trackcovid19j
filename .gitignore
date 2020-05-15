@@ -1,11 +1,6 @@
 .vscode
-__py_cache__
-.ipynb_checkpoints
-*.ipynb
-*.pyc
+data/*json
+data/Errata.csv
+*ipynb*
 newsapikey.txt
-*news_articles.json
-us_deaths.json
-Errata.csv
-
-
+__pycache__
