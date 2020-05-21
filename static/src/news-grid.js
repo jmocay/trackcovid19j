@@ -1,5 +1,5 @@
-var navBar
-var newsGrid
+let navBar
+let newsGrid
 
 window.onload = async () => {
     navBar = new NavBar(appConfig)

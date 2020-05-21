@@ -1,9 +1,9 @@
-var navBar
-var barChart
-var lineChart
-var polarChart
-var tabs;
-var stateMap;
+let navBar
+let barChart
+let lineChart
+let polarChart
+let tabs;
+let stateMap;
 
 window.addEventListener('load', async ()=> {
     navBar = new NavBar(appConfig)

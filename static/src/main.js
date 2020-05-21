@@ -1,9 +1,9 @@
-var sideBar
-var navBar
-var confirmedCasesMap
-var casesChart
-var casesSummary
-var casesDetails
+let sideBar
+let navBar
+let confirmedCasesMap
+let casesChart
+let casesSummary
+let casesDetails
 
 window.onload = async () => {
     sideBar = new Sidebar(appConfig)
