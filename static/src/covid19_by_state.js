@@ -52,7 +52,7 @@ class Tabs {
             tab__nav_cases_new: 'tab__new_cases',
             tab__nav_counties: 'tab__counties',
             tab__nav_map: 'tab__map',
-        } 
+        }
     }
 
     initialize = () => {
@@ -540,7 +540,7 @@ class StateMap {
                 },
             })
             let latLon = await res.json()
-            return latLon   
+            return latLon
         } catch (err) {
             console.error(err)
         }

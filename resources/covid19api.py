@@ -1,5 +1,19 @@
 import pandas as pd
+from os import path
+from datetime import datetime
+from math import floor
 from flask_restful import Resource
+
+class LastUpdateDate(Resource):
+    def get(self):
+        mdate = datetime.fromtimestamp(
+            floor(
+                path.getmtime('data/daily_report.csv')
+            )
+        )
+        return {
+            "lastUpdate": '{0}/{1}/{2}'.format(str(mdate.month).zfill(2), str(mdate.day).zfill(2), mdate.year)
+        }
 
 class Covid19CasesMap(Resource):
     def get(self):
@@ -15,7 +29,7 @@ class Covid19CasesMap(Resource):
         }
 
 class GlobalCasesTimeSeries(Resource):
-    def get(self, country):         
+    def get(self, country):
         categories = ['confirmed', 'deaths', 'recovered']
         csv_files = [
             'data/time_series_covid19_confirmed_global.csv',

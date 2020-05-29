@@ -23,6 +23,25 @@ window.onload = async () => {
 
     confirmedCasesMap = new ConfirmedCasesMap(appConfig)
     confirmedCasesMap.initialize()
+
+    getLastUpdate()
+}
+
+const getLastUpdate = async () => {
+    try {
+        let url = encodeURI(`${appConfig.serverUrl[appConfig.env]}/last_update`)
+        let res = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        let asof = await res.json()
+        document.querySelector('#last-update').textContent = 'Last Updated on ' + asof['lastUpdate'] + ' (MM/DD/YYYY)'
+    }
+    catch (err) {
+        console.log(err)
+    }
 }
 
 class NavBar {
@@ -109,9 +128,9 @@ class Sidebar {
         let root = document.getElementById('sidebar')
         let a = document.querySelector("#sidebar-closebtn")
         a.onclick = this.closeSidebar.bind(this)
-        
+
         createSidebarItem('Global', root)
-        
+
         sidebarData['countries'].forEach((country) => {
             createSidebarItem(country, root)
         })
@@ -190,12 +209,24 @@ class ConfirmedCasesMap {
     }
 
     show = (mapData) => {
-        let ncov19Icon = L.icon({
-            iconUrl: 'static/images/corona-red.ico',
-            iconSize: [32, 32],
+        const markerStyles = `
+            background-color: #FF4500;
+            width: 1rem;
+            height: 1rem;
+            display: block;
+            left: 0rem;
+            top: 0rem;
+            position: relative;
+            border-radius: 3rem 3rem 0;
+            transform: rotate(45deg);
+            border: 1px solid #FFFFFF
+        `
+        const markerIcon = L.divIcon({
+            className: "covid19-icon",
             iconAnchor: [16, 16],
             popupAnchor: [-5, -5],
-        });
+            html: `<span style="${markerStyles}" />`
+        })
 
         mapData['lat'].forEach((lat, i) => {
             if (mapData['confirmed'][i] >= 20) {
@@ -204,7 +235,7 @@ class ConfirmedCasesMap {
                         lat,
                         mapData['lon'][i]
                     ],
-                    { icon: ncov19Icon }
+                    { icon: markerIcon }
                 ).addTo(this.ccMap)
 
                 layer.bindTooltip(`

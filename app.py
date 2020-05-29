@@ -5,6 +5,7 @@ from flask import (
 )
 from flask_restful import Resource, Api
 from resources.covid19api import (
+    LastUpdateDate,
     AllCases,
     AllCountries,
     CasesByCountry,
@@ -30,6 +31,7 @@ from resources.news import Headlines
 app = Flask(__name__)
 api = Api(app)
 
+api.add_resource(LastUpdateDate, "/last_update")
 api.add_resource(AllCases, "/all_cases")
 api.add_resource(AllCountries, "/all_countries")
 api.add_resource(CasesByCountry, "/cases_bycountry/<country>")
