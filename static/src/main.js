@@ -229,7 +229,7 @@ class ConfirmedCasesMap {
         })
 
         mapData['lat'].forEach((lat, i) => {
-            if (mapData['confirmed'][i] >= 20) {
+            if (mapData['confirmed'][i] >= 10) {
                 let layer = L.marker(
                     [
                         lat,
@@ -238,12 +238,14 @@ class ConfirmedCasesMap {
                     { icon: markerIcon }
                 ).addTo(this.ccMap)
 
-                layer.bindTooltip(`
-                        Location: <b>${mapData['location'][i]}</b><br>
-                        Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
-                        Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
-                    `).openTooltip()
-                layer.closeTooltip()
+                if (mapData['deaths'][i] >= 50) {
+                    layer.bindTooltip(`
+                            Location: <b>${mapData['location'][i]}</b><br>
+                            Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
+                            Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
+                        `).openTooltip()
+                    layer.closeTooltip()
+                }
             }
         })
 
