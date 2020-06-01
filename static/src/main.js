@@ -209,7 +209,19 @@ class ConfirmedCasesMap {
     }
 
     show = (mapData) => {
-        const markerStyles = `
+        const markerStylesSmall = `
+            background-color: #FF4500;
+            width: .25rem;
+            height: .25rem;
+            display: block;
+            left: 0rem;
+            top: 0rem;
+            position: relative;
+            border-radius: 1rem 1rem 0;
+            transform: rotate(45deg);
+            border: 1px solid #FFFFFF
+        `
+        const markerStylesLarge = `
             background-color: #FF4500;
             width: 1rem;
             height: 1rem;
@@ -217,35 +229,54 @@ class ConfirmedCasesMap {
             left: 0rem;
             top: 0rem;
             position: relative;
-            border-radius: 3rem 3rem 0;
+            border-radius: 1rem 1rem 0;
             transform: rotate(45deg);
             border: 1px solid #FFFFFF
         `
-        const markerIcon = L.divIcon({
+        const markerIconSmall = L.divIcon({
             className: "covid19-icon",
             iconAnchor: [16, 16],
             popupAnchor: [-5, -5],
-            html: `<span style="${markerStyles}" />`
+            html: `<span style="${markerStylesSmall}" />`
+        })
+        const markerIconLarge = L.divIcon({
+            className: "covid19-icon",
+            iconAnchor: [16, 16],
+            popupAnchor: [-5, -5],
+            html: `<span style="${markerStylesLarge}" />`
         })
 
         mapData['lat'].forEach((lat, i) => {
-            if (mapData['confirmed'][i] >= 10) {
-                let layer = L.marker(
+            let layer;
+            let minSignDeaths = 100
+            if (mapData['deaths'][i] >= minSignDeaths ||
+                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['confirmed'][i] >= 10)) {
+                layer = L.marker(
                     [
                         lat,
                         mapData['lon'][i]
                     ],
-                    { icon: markerIcon }
+                    { icon: markerIconLarge }
                 ).addTo(this.ccMap)
+            }
+            else {
+                layer = L.marker(
+                    [
+                        lat,
+                        mapData['lon'][i]
+                    ],
+                    { icon: markerIconSmall }
+                ).addTo(this.ccMap)
+            }
 
-                if (mapData['deaths'][i] >= 50) {
-                    layer.bindTooltip(`
-                            Location: <b>${mapData['location'][i]}</b><br>
-                            Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
-                            Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
-                        `).openTooltip()
-                    layer.closeTooltip()
-                }
+            if (mapData['deaths'][i] >= minSignDeaths ||
+                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['deaths'][i] >= 0)) {
+                layer.bindTooltip(`
+                        Location: <b>${mapData['location'][i]}</b><br>
+                        Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
+                        Deaths: <b>${mapData['deaths'][i].toLocaleString()}</b><br>
+                    `).openTooltip()
+                layer.closeTooltip()
             }
         })
 
