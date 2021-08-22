@@ -248,9 +248,9 @@ class ConfirmedCasesMap {
 
         mapData['lat'].forEach((lat, i) => {
             let layer;
-            let minSignDeaths = 300
+            let minSignDeaths = 250
             if (mapData['deaths'][i] >= minSignDeaths ||
-                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['confirmed'][i] >= 10)) {
+                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['confirmed'][i] >= 500)) {
                 layer = L.marker(
                     [
                         lat,
