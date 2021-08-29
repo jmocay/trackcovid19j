@@ -248,7 +248,7 @@ class ConfirmedCasesMap {
 
         mapData['lat'].forEach((lat, i) => {
             let layer;
-            let minSignDeaths = 250
+            let minSignDeaths = 100
             if (mapData['deaths'][i] >= minSignDeaths ||
                 (!(mapData['location'][i].match(/US$/) == 'US') && mapData['confirmed'][i] >= 500)) {
                 layer = L.marker(
@@ -270,7 +270,7 @@ class ConfirmedCasesMap {
             }
 
             if (mapData['deaths'][i] >= minSignDeaths ||
-                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['deaths'][i] >= 0)) {
+                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['deaths'][i] >= 250)) 0{
                 layer.bindTooltip(`
                         Location: <b>${mapData['location'][i]}</b><br>
                         Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
