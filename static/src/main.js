@@ -270,7 +270,7 @@ class ConfirmedCasesMap {
             }
 
             if (mapData['deaths'][i] >= minSignDeaths ||
-                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['deaths'][i] >= 300)) 0{
+                (!(mapData['location'][i].match(/US$/) == 'US') && mapData['deaths'][i] >= 350)) {
                 layer.bindTooltip(`
                         Location: <b>${mapData['location'][i]}</b><br>
                         Confirmed Case(s): <b>${mapData['confirmed'][i].toLocaleString()}</b><br>
